@@ -107,7 +107,7 @@ Asegúrate de tener configurada tu base de datos SQL y ajusta las configuracione
 
 ```bash
 # En el directorio backend/
-python app.py
+python run.py
 
 # En el directorio frontend/my-react-app/
 npm run dev
