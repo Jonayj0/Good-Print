@@ -3,26 +3,18 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Home from './views/home';
 import ApiView from './views/apiView';
 import Navbar from './components/navbar';
+import Footer from './components/footer';
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Navbar />
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/api-view">API View</Link>
-            </li>
-          </ul>
-        </nav>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/api-view" element={<ApiView />} />
         </Routes>
+        <Footer />
       </div>
     </Router>
   );
