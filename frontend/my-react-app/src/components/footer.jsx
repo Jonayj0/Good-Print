@@ -1,9 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "../style/footer.css"
 
 function Footer() {
     return (
-        <div className="footer container bg-body-tertiary">
+        <div className="footer container">
             <ul className="nav justify-content-center">
         <li className="nav-item">
             <Link className="nav-link home" aria-current="page" to="/">Home</Link>

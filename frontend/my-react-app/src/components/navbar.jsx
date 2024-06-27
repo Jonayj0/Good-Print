@@ -1,13 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "../style/navbar.css"
 
 function Navbar() {
     return (
         <>
-            <nav className="navbar navbar-expand-lg bg-body-tertiary">
+            <nav className="navbar container navbar-expand-lg">
                 <div className="container-fluid">
                     <Link to="/">
-                        <i className="fa-brands fa-goodreads ms-3 me-5" style={{ color: '#846ec4' }}></i>
+                        <i className="logo fa-brands fa-goodreads ms-3 me-5" style={{ color: '#846ec4' }}></i>
                     </Link>
                     <Link className="navbar-brand" to="/">
                         Good Print
@@ -31,9 +32,14 @@ function Navbar() {
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/api-view">
+                                <Link className="nav-link active" to="/api-view">
                                     API View
                                 </Link>
+                            </li>
+                            <li className="nav-item">
+                                <span className="nav-link active">
+                                    Nosotros
+                                </span>
                             </li>
                             <li className="nav-item dropdown">
                                 <a
@@ -65,11 +71,6 @@ function Navbar() {
                                         </a>
                                     </li>
                                 </ul>
-                            </li>
-                            <li className="nav-item">
-                                <span className="nav-link disabled" aria-disabled="true">
-                                    Disabled
-                                </span>
                             </li>
                         </ul>
                         <form className="d-flex" role="search">

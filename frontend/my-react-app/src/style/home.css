@@ -1,0 +1,12 @@
+.home{
+    display: block;
+    align-items: center;
+}
+.titulo-home{
+    display: flex;
+    justify-content: center;
+}
+.foto-home {
+    display: flex;
+    align-items: center;
+}
