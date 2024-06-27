@@ -1,12 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom'; // Usa Routes en lugar de Switch
-import Home from './components/home';
-import ApiView from './components/apiView';
+import Home from './views/home';
+import ApiView from './views/apiView';
+import Navbar from './components/navbar';
 
 function App() {
   return (
     <Router>
       <div className="App">
+        <Navbar />
         <nav>
           <ul>
             <li>
