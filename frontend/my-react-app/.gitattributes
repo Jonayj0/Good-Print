@@ -1,0 +1,12 @@
+# Este archivo .gitattributes configura las terminaciones de línea para archivos específicos
+# Todos los archivos de texto tendrán terminaciones de línea LF en el repositorio
+* text=auto
+
+# Fuerza los archivos específicos a LF
+*.js text eol=lf
+*.jsx text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+
+# Añadir otras extensiones de archivo según sea necesario

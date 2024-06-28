@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../style/navbar.css"
+import logo from "../assets/Definitivo-ok.png"
 
 function Navbar() {
     return (
@@ -8,7 +9,7 @@ function Navbar() {
             <nav className="navbar container navbar-expand-lg">
                 <div className="container-fluid">
                     <Link to="/">
-                        <i className="logo fa-brands fa-goodreads ms-3 me-5" style={{ color: '#846ec4' }}></i>
+                    <img className="logo-img" src={logo} alt="logo" style={{ width: "100px", height: "auto" }}/>
                     </Link>
                     <Link className="navbar-brand" to="/">
                         Good Print
