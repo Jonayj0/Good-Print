@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom'; // Usa Routes en lugar de Switch
 import Home from './views/home';
 import ApiView from './views/apiView';
+import Nosotros from './views/nosotros';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
 
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/api-view" element={<ApiView />} />
+          <Route path="/nosotros" element={<Nosotros />} />
         </Routes>
         <Footer />
       </div>
