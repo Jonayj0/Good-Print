@@ -11,7 +11,7 @@ function ApiView() {
     }, []);
 
     return (
-        <div>
+        <div className='container'>
         <h1>API View</h1>
         <p>{message}</p>
         </div>

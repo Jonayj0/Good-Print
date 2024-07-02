@@ -1,12 +1,12 @@
 /* Estilo global para centrar el contenedor en la página */
-body, html {
+/* body {
     height: 100%;
     margin: 0;
     display: flex;
     align-content: flex-start;
     justify-content: center;
     flex-wrap: wrap;
-  }
+  } */
   
   .home {
     position: relative;
@@ -23,7 +23,10 @@ body, html {
     object-fit: cover;
   }
   
-  .overlay {
+  .titulo-home {
+    font-size: 10vw; /* Utiliza una unidad relativa para que el texto se escale */
+    font-weight: bold;
+    text-shadow: 3px 3px 1px rgba(0, 0, 0, 0.7); /* Para mejorar la legibilidad del texto */
     position: absolute;
     top: 50%;
     left: 50%;
@@ -32,12 +35,6 @@ body, html {
     text-align: center;
     padding: 0 10px; /* Añade padding para evitar que el texto se toque con los bordes en pantallas pequeñas */
     width: 100%;
-  }
-  
-  .titulo-home {
-    font-size: 10vw; /* Utiliza una unidad relativa para que el texto se escale */
-    font-weight: bold;
-    text-shadow: 3px 3px 1px rgba(0, 0, 0, 0.7); /* Para mejorar la legibilidad del texto */
   }
   
   /* Media queries para ajustar el diseño en diferentes tamaños de pantalla */

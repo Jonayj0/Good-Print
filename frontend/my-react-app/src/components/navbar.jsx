@@ -38,9 +38,9 @@ function Navbar() {
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <span className="nav-link active">
+                            <Link className="nav-link active" to="/nosotros">
                                     Nosotros
-                                </span>
+                                </Link>
                             </li>
                             <li className="nav-item dropdown">
                                 <a
@@ -50,7 +50,7 @@ function Navbar() {
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false"
                                 >
-                                    Dropdown
+                                    Productos y servicios
                                 </a>
                                 <ul className="dropdown-menu">
                                     <li>
@@ -74,7 +74,7 @@ function Navbar() {
                                 </ul>
                             </li>
                         </ul>
-                        <form className="d-flex" role="search">
+                        <form className="form d-flex" role="search">
                             <input
                                 className="form-control me-2"
                                 type="search"
