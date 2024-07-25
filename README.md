@@ -115,7 +115,10 @@ npm run dev
 
 ## 🌐 6. Accede a la Aplicación
 
-Abre tu navegador y visita http://localhost:3000/ para ver la aplicación en funcionamiento.
+Abre tu navegador y visita http://localhost:3005/ para ver la aplicación en funcionamiento.
+
+## 📝 7. Accede al admin del backend para añadir productos como administrador
+Abre tu navegador y visita http://127.0.0.1:5000/admin/
 
 ## 📫 Contacto
 ## Email: jonaybolanosmolina@gmail.com
