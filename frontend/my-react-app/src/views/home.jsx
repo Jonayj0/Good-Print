@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+
+// import { Link } from "react-router-dom";
 import "../style/home.css";
 import CardProductos from "../components/card-productos";
 
