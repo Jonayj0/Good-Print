@@ -22,7 +22,7 @@ const injectContext = PassedComponent => {
         useEffect(() => {
             // Llama a una acción de ejemplo o inicial
             state.actions.getMessage();
-        }, []);
+        }, [state.actions]);
 
         return (
             <Context.Provider value={state}>
