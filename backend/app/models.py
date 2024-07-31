@@ -14,4 +14,4 @@ class Product(db.Model):
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.Text, nullable=False)
     price = db.Column(db.Float, nullable=False)
-    image_url = db.Column(db.String(200), nullable=True)
+    image_url = db.Column(db.String(900), nullable=True)

@@ -20,3 +20,23 @@ def add_product():
     db.session.add(new_product)
     db.session.commit()
     return jsonify({"message": "Product added successfully!"}), 201
+
+@main.route('/products', methods=['GET'])
+def get_products():
+    # Consulta para obtener todos los productos
+    products = Product.query.all()
+    
+    # Transformar la consulta en una lista de diccionarios
+    products_list = [
+        {
+            "id": product.id,
+            "name": product.name,
+            "description": product.description,
+            "price": product.price,
+            "image_url": product.image_url
+        }
+        for product in products
+    ]
+    
+    # Devolver la lista de productos como JSON
+    return jsonify(products_list), 200
