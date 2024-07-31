@@ -1,22 +1,27 @@
-import React from "react";
 import { Link } from "react-router-dom";
+import PropTypes from 'prop-types';
 
-function CardProductos() {
+function CardProductos({ name, description, price, image_url }) {
     return (
         <div className="card" style={{width: "18rem"}}>
-            <img src="https://th.bing.com/th/id/OIP.rrHrZPZw7SmAaa9kGcRilAHaE8?w=283&h=189&c=7&r=0&o=5&dpr=1.3&pid=1.7" className="card-img-top" alt="..." />
+            <img src={image_url} className="card-img-top" alt={name} />
             <div className="card-body">
-                <h5 className="card-title">Card title</h5>
-                <p className="card-text">
-                    Some quick example text to build on the card title and make up the
-                    bulk of the card's content.
-                </p>
-                <a href="#" className="btn btn-primary">
-                    Go somewhere
-                </a>
+                <h5 className="card-title">{name}</h5>
+                <p className="card-text">{description}</p>
+                <p className="card-text"><strong>Price:</strong>{price}€</p>
+                <Link to="#" className="btn btn-primary">
+                    Ver Detalles
+                </Link>
             </div>
         </div>
     );
 }
+
+CardProductos.propTypes = {
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    image_url: PropTypes.string.isRequired,
+};
 
 export default CardProductos;

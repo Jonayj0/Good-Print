@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../api';
+import CardProductos from '../components/card-productos';
 
 function ApiView() {
     const [message, setMessage] = useState('');
@@ -14,6 +15,12 @@ function ApiView() {
         <div className='container'>
         <h1>API View</h1>
         <p>{message}</p>
+        <section className="card-producto container mb-5 d-flex justify-content-evenly">
+            <CardProductos/>
+            <CardProductos/>
+            <CardProductos/>
+            <CardProductos/>
+        </section>
         </div>
     );
 }
