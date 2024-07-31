@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import getState from "./flux";
 
-// Crea el contexto
 export const Context = React.createContext(null);
 
-// Componente que envuelve el componente principal
 const AppContext = ({ children }) => {
     const [state, setState] = useState(
         getState({
@@ -20,12 +18,13 @@ const AppContext = ({ children }) => {
     );
 
     useEffect(() => {
+        // Solo ejecuta `getProducts` una vez al montar el componente
         if (state.actions && typeof state.actions.getProducts === 'function') {
             state.actions.getProducts();
         } else {
             console.error("actions.getProducts is not a function");
         }
-    }, [state.actions]);
+    }, []); // Dependencias vacías
 
     return (
         <Context.Provider value={state}>
@@ -34,11 +33,8 @@ const AppContext = ({ children }) => {
     );
 };
 
-// Define propTypes para AppContext
 AppContext.propTypes = {
     children: PropTypes.node.isRequired,
 };
 
 export default AppContext;
-
-
