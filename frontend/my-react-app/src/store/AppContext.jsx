@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import PropTypes from 'prop-types';
 import getState from "./flux";
 
@@ -10,24 +10,17 @@ const AppContext = ({ children }) => {
             getStore: () => state.store,
             getActions: () => state.actions,
             setStore: (updatedStore) =>
-                setState({
-                    store: { ...state.store, ...updatedStore },
-                    actions: { ...state.actions },
-                }),
+                setState((prevState) => ({
+                    store: { ...prevState.store, ...updatedStore },
+                    actions: prevState.actions, // Mantener referencia
+                })),
         })
     );
 
-    useEffect(() => {
-        // Solo ejecuta `getProducts` una vez al montar el componente
-        if (state.actions && typeof state.actions.getProducts === 'function') {
-            state.actions.getProducts();
-        } else {
-            console.error("actions.getProducts is not a function");
-        }
-    }, []); // Dependencias vacías
+    const actions = useMemo(() => state.actions, [state.actions]);
 
     return (
-        <Context.Provider value={state}>
+        <Context.Provider value={{ store: state.store, actions }}>
             {children}
         </Context.Provider>
     );
