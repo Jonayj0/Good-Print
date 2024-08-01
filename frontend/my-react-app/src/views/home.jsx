@@ -1,18 +1,19 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Context } from "../store/AppContext";
 import "../style/home.css";
 import CardProductos from "../components/card-productos.jsx";
-import TestContext from "../components/TestContext.jsx";
 
 function Home() {
     const { store, actions } = useContext(Context);
-    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
-        if (!loaded && actions && typeof actions.getProducts === 'function') {
-            actions.getProducts().finally(() => setLoaded(true));
+        // Solo realiza el fetch si los productos no están en el store
+        if (!store.products.length) {
+            actions.getProducts().catch(error => {
+                console.error("Error fetching products:", error);
+            });
         }
-    }, [actions, loaded]);
+    }, [store.products.length, actions]);
 
     return (
         <div className="container">
@@ -35,7 +36,6 @@ function Home() {
                     <p>No products available</p>
                 )}
             </section>
-            <TestContext/>
         </div>
     );
 }
