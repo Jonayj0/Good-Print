@@ -1,0 +1,7 @@
+.detalles-producto {
+    position: relative;
+    width: 100%;
+    max-width: 80%; /* Ajusta el tamaño máximo según sea necesario */
+    height: auto;
+    overflow: hidden; /* Asegura que la imagen no desborde el contenedor */
+  }
