@@ -10,7 +10,7 @@ function CardProductos({ name, description, price, image_url }) {
                 <h5 className="card-title">{name}</h5>
                 <p className="card-text">{description}</p>
                 <p className="card-text"><strong>Price: </strong>{price}<strong>€</strong></p>
-                <Link to="#" className="btn btn-primary">
+                <Link to="/detalles-producto" className="btn btn-primary">
                     Ver Detalles
                 </Link>
             </div>

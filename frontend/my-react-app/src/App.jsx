@@ -4,6 +4,7 @@ import ApiView from './views/apiView';
 import Nosotros from './views/nosotros';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
+import DetallesProducto from './views/detallesProducto';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/api-view" element={<ApiView />} />
           <Route path="/nosotros" element={<Nosotros />} />
+          <Route path="/detalles-producto" element={<DetallesProducto />} />
         </Routes>
         <Footer />
       </div>
