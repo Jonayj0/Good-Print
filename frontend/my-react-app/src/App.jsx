@@ -4,7 +4,8 @@ import ApiView from './views/apiView';
 import Nosotros from './views/nosotros';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
-import DetallesProducto from './views/detallesProducto';
+import ProductDetails from './views/productDetails';
+import ReservationPage from './views/reservationPage';
 
 function App() {
   return (
@@ -15,7 +16,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/api-view" element={<ApiView />} />
           <Route path="/nosotros" element={<Nosotros />} />
-          <Route path="/detalles-producto" element={<DetallesProducto />} />
+          <Route path="/product-details" element={<ProductDetails />} />
+          <Route path="/reservar/:id/:name" element={<ReservationPage />} />
         </Routes>
         <Footer />
       </div>
@@ -24,6 +26,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
