@@ -26,6 +26,7 @@ function Home() {
                     store.products.map(product => (
                         <CardProductos
                             key={product.id}
+                            id={product.id}
                             name={product.name || 'Unknown Name'}
                             description={product.description || 'No description available'}
                             price={product.price || 0}
@@ -41,3 +42,4 @@ function Home() {
 }
 
 export default Home;
+
