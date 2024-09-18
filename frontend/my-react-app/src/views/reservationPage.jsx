@@ -1,6 +1,7 @@
 // pages/ReservationPage.jsx
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom'; // Para obtener el id del producto
+import "../style/reservation-page.css";
 
 const ReservationPage = () => {
   const { id, name } = useParams(); // Obtener el ID del producto de la URL
