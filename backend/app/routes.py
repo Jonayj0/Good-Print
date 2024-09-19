@@ -1,8 +1,16 @@
 from flask import Blueprint, jsonify, request
 from app import db
 from app.models import Product, Reserva
+import cloudinary
+import cloudinary.uploader
 
 main = Blueprint('main', __name__)
+
+cloudinary.config(
+    cloud_name='dtxkcfugs',
+    api_key='714796538293287',
+    api_secret='T9xmi1bQu6iZ3k2yEOE0fd7nTlw'
+)
 
 @main.route('/')
 def home():
@@ -55,12 +63,12 @@ def create_reservation():
     print("Product ID:", producto_id)
 
     if fotos:
-        # Guardar el archivo de fotos y obtener la ruta
-        fotos_path = f'static/uploads/{fotos.filename}'
-        fotos.save(fotos_path)
-        print(f"Foto guardada en: {fotos_path}")
+        # Subir la foto a Cloudinary
+        upload_response = cloudinary.uploader.upload(fotos)
+        fotos_url = upload_response['secure_url']  # URL de la foto en Cloudinary
+        print(f"Foto guardada en Cloudinary: {fotos_url}")
     else:
-        fotos_path = None
+        fotos_url = None
 
     producto = Product.query.get(producto_id)
     if producto:
@@ -70,7 +78,7 @@ def create_reservation():
             nombre_cliente=nombre_cliente,
             email_cliente=email_cliente,
             mensaje=mensaje,
-            fotos=fotos_path,
+            fotos=fotos_url,  # Almacena la URL de Cloudinary
             producto_id=producto_id,
             cliente_id=1  # Si tienes un usuario autenticado, reemplaza esto por el ID del usuario
         )
