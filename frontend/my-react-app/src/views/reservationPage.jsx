@@ -34,44 +34,48 @@ const ReservationPage = () => {
   };
 
   return (
-    <div className="reservation-page container">
-      <h1>Reservar {name}</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Nombre:</label>
+    <div className="reservation-page__container container">
+      <h1 className="reservation-page__header">Reservar {name}</h1>
+      <form className="reservation-page__form" onSubmit={handleSubmit}>
+        <div className="reservation-page__form-group">
+          <label className="reservation-page__label">Nombre:</label>
           <input 
             type="text" 
+            className="reservation-page__input" 
             value={productName} 
             onChange={(e) => setProductName(e.target.value)} 
             required 
           />
         </div>
-        <div>
-          <label>Email:</label>
+        <div className="reservation-page__form-group">
+          <label className="reservation-page__label">Email:</label>
           <input 
             type="email" 
+            className="reservation-page__input" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
             required 
           />
         </div>
-        <div>
-          <label>Mensaje:</label>
+        <div className="reservation-page__form-group">
+          <label className="reservation-page__label">Mensaje:</label>
           <textarea 
+            className="reservation-page__textarea" 
             value={message} 
             onChange={(e) => setMessage(e.target.value)} 
             required 
           />
         </div>
-        <div>
-          <label>Subir fotos:</label>
+        <div className="reservation-page__form-group">
+          <label className="reservation-page__label">Subir fotos:</label>
           <input 
             type="file" 
+            className="reservation-page__file-input" 
             onChange={(e) => setPhotos(e.target.files[0])} 
             accept="image/*" 
           />
         </div>
-        <button type="submit">Reservar</button>
+        <button type="submit" className="reservation-page__button">Reservar</button>
       </form>
     </div>
   );
