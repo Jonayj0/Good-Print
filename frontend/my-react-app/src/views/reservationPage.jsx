@@ -21,7 +21,7 @@ const ReservationPage = () => {
     formData.append('productId', id); // Enviar el ID del producto relacionado
     formData.append('productName', name);
 
-    const response = await fetch('/api/reservation', {
+    const response = await fetch('http://localhost:5000/api/reservation', {
       method: 'POST',
       body: formData,
     });
