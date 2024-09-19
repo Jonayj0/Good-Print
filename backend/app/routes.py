@@ -43,6 +43,7 @@ def get_products():
 
 @main.route('/api/reservation', methods=['POST'])
 def create_reservation():
+    print(request.form)
     nombre_cliente = request.form.get('name')
     email_cliente = request.form.get('email')
     mensaje = request.form.get('message')

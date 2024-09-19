@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\ASUS\Jonai\Template_React_con_Vite_Jonai\backend\venv
+set VIRTUAL_ENV=C:\Users\ASUS\Jonai\Good-Print\backend\venv
 
 if not defined PROMPT set PROMPT=$P$G
 
