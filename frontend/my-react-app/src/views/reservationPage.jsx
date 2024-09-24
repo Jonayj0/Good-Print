@@ -1,9 +1,9 @@
-// pages/ReservationPage.jsx
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom'; // Para obtener el id del producto
+import { useParams, useNavigate } from 'react-router-dom';
 import "../style/reservation-page.css";
 
 const ReservationPage = () => {
+  const navigate = useNavigate();
   const { id, name } = useParams(); // Obtener el ID del producto de la URL
   const [productName, setProductName] = useState('');
   const [email, setEmail] = useState('');
@@ -21,15 +21,22 @@ const ReservationPage = () => {
     formData.append('productId', id); // Enviar el ID del producto relacionado
     formData.append('productName', name);
 
-    const response = await fetch('http://localhost:5000/api/reservation', {
-      method: 'POST',
-      body: formData,
-    });
+    try {
+      const response = await fetch('http://localhost:5000/api/reservation', {
+        method: 'POST',
+        body: formData,
+      });
 
-    if (response.ok) {
-      alert('¡Reserva realizada con éxito!');
-    } else {
-      alert('Algo salió mal, por favor intenta de nuevo.');
+      if (response.ok) {
+        alert('¡Reserva realizada con éxito!');
+        navigate("/");  // Redirigir a la página principal
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message || 'Algo salió mal, por favor intenta de nuevo.'}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Hubo un error al procesar la reserva. Por favor, verifica tu conexión a internet e inténtalo nuevamente.');
     }
   };
 
