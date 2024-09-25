@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import "../style/reservation-page.css";
+import Swal from 'sweetalert2';
 
 const ReservationPage = () => {
   const navigate = useNavigate();
@@ -9,6 +10,13 @@ const ReservationPage = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [photos, setPhotos] = useState(null);
+  const [preview, setPreview] = useState(null); // Estado para previsualizar las imagenes
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setPhotos(file);
+    setPreview(URL.createObjectURL(file));
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -28,15 +36,27 @@ const ReservationPage = () => {
       });
 
       if (response.ok) {
-        alert('¡Reserva realizada con éxito!');
+        Swal.fire({
+          icon: 'success',
+          title: '¡Reserva realizada con éxito!',
+          text: 'Tu reserva ha sido creada correctamente.',
+        });
         navigate("/");  // Redirigir a la página principal
       } else {
         const errorData = await response.json();
-        alert(`Error: ${errorData.message || 'Algo salió mal, por favor intenta de nuevo.'}`);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error en la reserva',
+          text: errorData.message || 'Algo salió mal, por favor intenta de nuevo.',
+        });
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Hubo un error al procesar la reserva. Por favor, verifica tu conexión a internet e inténtalo nuevamente.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error en la conexión',
+        text: 'Hubo un error al procesar la reserva. Verifica tu conexión e inténtalo nuevamente.',
+      });
     }
   };
 
@@ -78,9 +98,14 @@ const ReservationPage = () => {
           <input 
             type="file" 
             className="reservation-page__file-input" 
-            onChange={(e) => setPhotos(e.target.files[0])} 
+            onChange={handleImageChange} 
             accept="image/*" 
           />
+          {preview && (
+            <div className="reservation-page__image-preview">
+              <img src={preview} alt="Previsualización" width="200" />
+            </div>
+          )}
         </div>
         <button type="submit" className="reservation-page__button">Reservar</button>
       </form>
