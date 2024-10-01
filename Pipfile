@@ -7,6 +7,9 @@ name = "pypi"
 flask = "*"
 flask-migrate = "*"
 cloudinary = "*"
+flask-sqlalchemy = "*"
+flask-cors = "*"
+flask-admin = "*"
 
 [dev-packages]
 
