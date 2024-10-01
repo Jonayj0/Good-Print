@@ -26,6 +26,7 @@ class Product(db.Model):
 class Reserva(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre_cliente = db.Column(db.String(100), nullable=False)
+    telefono_cliente = db.Column(db.String(50), nullable=False, default='0000000000')
     email_cliente = db.Column(db.String(100), nullable=False)
     mensaje = db.Column(db.Text, nullable=True)
     fotos = db.Column(db.String(200), nullable=True)  # Ruta de la imagen subida

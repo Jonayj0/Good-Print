@@ -55,6 +55,7 @@ def create_reservation():
     print("Files Received:", request.files)
 
     nombre_cliente = request.form.get('name')
+    telefono_cliente = request.form.get('telefono')
     email_cliente = request.form.get('email')
     mensaje = request.form.get('message')
     fotos = request.files.get('photos')
@@ -76,6 +77,7 @@ def create_reservation():
 
         reserva = Reserva(
             nombre_cliente=nombre_cliente,
+            telefono_cliente=telefono_cliente,
             email_cliente=email_cliente,
             mensaje=mensaje,
             fotos=fotos_url,  # Almacena la URL de Cloudinary
