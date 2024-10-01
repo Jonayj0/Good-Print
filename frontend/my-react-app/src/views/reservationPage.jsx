@@ -7,6 +7,7 @@ const ReservationPage = () => {
   const navigate = useNavigate();
   const { id, name } = useParams(); // Obtener el ID del producto de la URL
   const [productName, setProductName] = useState('');
+  const [telefono, setTelefono] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [photos, setPhotos] = useState([]); // Almacena múltiples archivos
@@ -59,6 +60,16 @@ const ReservationPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // // Verificar si el teléfono está vacío
+    // if (!telefono) {
+    //   Swal.fire({
+    //     icon: 'warning',
+    //     title: 'Teléfono requerido',
+    //     text: 'Por favor, ingresa tu número de teléfono.',
+    //   });
+    //   return; // Salir si el teléfono no está ingresado
+    // }
+
     // Verificar si no se han subido fotos, y preguntar al usuario
     if (photos.length === 0) {
       const confirm = await confirmNoPhotos(); // Mostrar alerta de confirmación
@@ -67,6 +78,7 @@ const ReservationPage = () => {
 
     const formData = new FormData();
     formData.append('name', productName);
+    formData.append('telefono', telefono);
     formData.append('email', email);
     formData.append('message', message);
     formData.append('productId', id); // Enviar el ID del producto relacionado
@@ -119,6 +131,18 @@ const ReservationPage = () => {
             className="reservation-page__input" 
             value={productName} 
             onChange={(e) => setProductName(e.target.value)} 
+            placeholder="Escriba su nombre"
+            required 
+          />
+        </div>
+        <div className="reservation-page__form-group">
+          <label className="reservation-page__label">Telefono:</label>
+          <input 
+            type="tel" 
+            className="reservation-page__input" 
+            value={telefono} 
+            onChange={(e) => setTelefono(e.target.value)} 
+            placeholder="1234567890"
             required 
           />
         </div>
@@ -129,6 +153,7 @@ const ReservationPage = () => {
             className="reservation-page__input" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
+            placeholder="email@email.com"
             required 
           />
         </div>
@@ -138,6 +163,7 @@ const ReservationPage = () => {
             className="reservation-page__textarea" 
             value={message} 
             onChange={(e) => setMessage(e.target.value)} 
+            placeholder="Texto"
             required 
           />
         </div>
