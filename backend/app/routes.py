@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, request
-from app import db
+from app import db, mail
 from app.models import Product, Reserva
 import cloudinary
 import cloudinary.uploader
+from flask_mail import Message
 
 main = Blueprint('main', __name__)
 
@@ -88,6 +89,27 @@ def create_reservation():
         db.session.add(reserva)
         db.session.commit()
 
+        # Enviar correo de confirmación al cliente
+        send_confirmation_email(email_cliente, nombre_cliente)
+
+        # Enviar correo al administrador
+        send_admin_notification(nombre_cliente, email_cliente, producto.name)
+
+
         return jsonify({'message': 'Reserva creada exitosamente!'}), 201
     else:
         return jsonify({'message': 'Producto no encontrado!'}), 404
+
+#--------------------------------------------FUNCIONES----------------------------------------------------------------
+# Función para enviar correo al cliente
+def send_confirmation_email(to_email, nombre_cliente):
+    msg = Message('Confirmación de Reserva', recipients=[to_email])
+    msg.body = f"Hola {nombre_cliente},\n\nTu reserva ha sido confirmada.\nGracias por tu confianza."
+    mail.send(msg)
+
+# Función para enviar notificación al administrador
+def send_admin_notification(nombre_cliente, email_cliente, producto_nombre):
+    admin_email = 'admin@tuweb.com'  # Cambia esto al correo del administrador
+    msg = Message('Nueva Reserva Realizada', recipients=[admin_email])
+    msg.body = f"Se ha realizado una nueva reserva.\n\nCliente: {nombre_cliente}\nEmail: {email_cliente}\nProducto: {producto_nombre}"
+    mail.send(msg)
