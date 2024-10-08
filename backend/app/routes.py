@@ -52,64 +52,85 @@ def get_products():
 
 @main.route('/api/reservation', methods=['POST'])
 def create_reservation():
-    print("Form Data Received:", request.form)
-    print("Files Received:", request.files)
+    try:
+        print("Form Data Received:", request.form)
+        print("Files Received:", request.files)
 
-    nombre_cliente = request.form.get('name')
-    telefono_cliente = request.form.get('telefono')
-    email_cliente = request.form.get('email')
-    mensaje = request.form.get('message')
-    fotos = request.files.get('photos')
-    producto_id = request.form.get('productId')
+        nombre_cliente = request.form.get('name')
+        telefono_cliente = request.form.get('telefono')
+        email_cliente = request.form.get('email')
+        mensaje = request.form.get('message')
+        fotos = request.files.get('photos')
+        producto_id = request.form.get('productId')
 
-    print("Product ID:", producto_id)
+        print("Product ID:", producto_id)
 
-    if fotos:
-        # Subir la foto a Cloudinary
-        upload_response = cloudinary.uploader.upload(fotos)
-        fotos_url = upload_response['secure_url']  # URL de la foto en Cloudinary
-        print(f"Foto guardada en Cloudinary: {fotos_url}")
-    else:
-        fotos_url = None
+        if fotos:
+            # Subir la foto a Cloudinary
+            upload_response = cloudinary.uploader.upload(fotos)
+            fotos_url = upload_response['secure_url']  # URL de la foto en Cloudinary
+            print(f"Foto guardada en Cloudinary: {fotos_url}")
+        else:
+            fotos_url = None
 
-    producto = Product.query.get(producto_id)
-    if producto:
-        print(f"Producto encontrado: {producto.name}")
+        producto = Product.query.get(producto_id)
+        if producto:
+            print(f"Producto encontrado: {producto.name}")
 
-        reserva = Reserva(
-            nombre_cliente=nombre_cliente,
-            telefono_cliente=telefono_cliente,
-            email_cliente=email_cliente,
-            mensaje=mensaje,
-            fotos=fotos_url,  # Almacena la URL de Cloudinary
-            producto_id=producto_id,
-            cliente_id=1  # Si tienes un usuario autenticado, reemplaza esto por el ID del usuario
-        )
+            reserva = Reserva(
+                nombre_cliente=nombre_cliente,
+                telefono_cliente=telefono_cliente,
+                email_cliente=email_cliente,
+                mensaje=mensaje,
+                fotos=fotos_url,
+                producto_id=producto_id,
+                cliente_id=1
+            )
 
-        db.session.add(reserva)
-        db.session.commit()
+            db.session.add(reserva)
+            db.session.commit()
 
-        # Enviar correo de confirmación al cliente
-        send_confirmation_email(email_cliente, nombre_cliente)
+            # Intentar enviar correos
+            try:
+                # Enviar correo de confirmación al cliente
+                send_confirmation_email(email_cliente, nombre_cliente, producto.name)
 
-        # Enviar correo al administrador
-        send_admin_notification(nombre_cliente, email_cliente, producto.name)
+                # Enviar correo al administrador
+                send_admin_notification(nombre_cliente, email_cliente, producto.name, mensaje, fotos_url)
+            except Exception as e:
+                print(f"Error al enviar correos: {str(e)}")
+                return jsonify({'message': 'Reserva creada, pero no se pudieron enviar los correos.'}), 500
 
-
-        return jsonify({'message': 'Reserva creada exitosamente!'}), 201
-    else:
-        return jsonify({'message': 'Producto no encontrado!'}), 404
+            return jsonify({'message': 'Reserva creada exitosamente!'}), 201
+        else:
+            return jsonify({'message': 'Producto no encontrado!'}), 404
+    except Exception as e:
+        print(f"Error al crear la reserva: {str(e)}")
+        return jsonify({'message': 'Hubo un error al crear la reserva.'}), 500
 
 #--------------------------------------------FUNCIONES----------------------------------------------------------------
 # Función para enviar correo al cliente
-def send_confirmation_email(to_email, nombre_cliente):
-    msg = Message('Confirmación de Reserva', recipients=[to_email])
-    msg.body = f"Hola {nombre_cliente},\n\nTu reserva ha sido confirmada.\nGracias por tu confianza."
-    mail.send(msg)
+def send_confirmation_email(to_email, nombre_cliente, producto_nombre):
+    try:
+        msg = Message('Confirmación de Reserva', recipients=[to_email])
+        msg.body = f"Hola {nombre_cliente},\n\nTu reserva para el producto {producto_nombre} ha sido confirmada.\nGracias por tu confianza."
+        mail.send(msg)
+    except Exception as e:
+        print(f"Error al enviar correo de confirmación: {str(e)}")
+        raise  # Vuelve a lanzar la excepción para manejarla en la función `create_reservation`
+
 
 # Función para enviar notificación al administrador
-def send_admin_notification(nombre_cliente, email_cliente, producto_nombre):
-    admin_email = 'admin@tuweb.com'  # Cambia esto al correo del administrador
-    msg = Message('Nueva Reserva Realizada', recipients=[admin_email])
-    msg.body = f"Se ha realizado una nueva reserva.\n\nCliente: {nombre_cliente}\nEmail: {email_cliente}\nProducto: {producto_nombre}"
-    mail.send(msg)
+def send_admin_notification(nombre_cliente, email_cliente, producto_nombre, mensaje_cliente, fotos_url):
+    try:
+        admin_email = 'elmundoenbandeja@gmail.com'
+        msg = Message('Nueva Reserva Realizada', recipients=[admin_email])
+        msg.body = (f"Se ha realizado una nueva reserva.\n\nCliente: {nombre_cliente}\nEmail: {email_cliente}\nProducto: {producto_nombre}\n" f"Mensaje del cliente: {mensaje_cliente}\n")
+        
+        if fotos_url:
+            msg.body += f"Fotos: {fotos_url}\n"
+        
+        mail.send(msg)
+    except Exception as e:
+        print(f"Error al enviar notificación al administrador: {str(e)}")
+        raise  # Vuelve a lanzar la excepción para manejarla en la función `create_reservation`
