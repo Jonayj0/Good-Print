@@ -2,20 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import "../style/reservation-page.css";
 import Swal from 'sweetalert2';
+import { ClipLoader } from 'react-spinners'; // Asegúrate de que esta importación sea correcta
 
 const ReservationPage = () => {
   const navigate = useNavigate();
-  const { id, name } = useParams(); // Obtener el ID del producto de la URL
+  const { id, name } = useParams();
   const [productName, setProductName] = useState('');
   const [telefono, setTelefono] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const [photos, setPhotos] = useState([]); // Almacena múltiples archivos
-  const [previews, setPreviews] = useState([]); // Almacena las previsualizaciones
+  const [photos, setPhotos] = useState([]);
+  const [previews, setPreviews] = useState([]);
+  const [loading, setLoading] = useState(false); // Estado de carga
 
-  // Manejar el cambio de selección de imágenes
   const handleImageChange = (e) => {
-    const selectedFiles = Array.from(e.target.files); // Convertir FileList en Array
+    const selectedFiles = Array.from(e.target.files);
 
     if (selectedFiles.length + photos.length > 3) {
       Swal.fire({
@@ -26,25 +27,22 @@ const ReservationPage = () => {
       return;
     }
 
-    setPhotos([...photos, ...selectedFiles]); // Agregar nuevas imágenes
+    setPhotos([...photos, ...selectedFiles]);
     const newPreviews = selectedFiles.map(file => URL.createObjectURL(file));
-    setPreviews([...previews, ...newPreviews]); // Agregar nuevas previsualizaciones
+    setPreviews([...previews, ...newPreviews]);
   };
 
-  // Limpiar las URLs de previsualización cuando cambien las fotos o se desmonte el componente
   useEffect(() => {
     return () => {
-      previews.forEach(preview => URL.revokeObjectURL(preview)); // Limpiar URLs al desmontar
+      previews.forEach(preview => URL.revokeObjectURL(preview));
     };
   }, [previews]);
 
-  // Función para eliminar una imagen seleccionada
   const handleRemoveImage = (indexToRemove) => {
-    setPhotos(photos.filter((_, index) => index !== indexToRemove)); // Eliminar imagen de la lista de fotos
-    setPreviews(previews.filter((_, index) => index !== indexToRemove)); // Eliminar previsualización correspondiente
+    setPhotos(photos.filter((_, index) => index !== indexToRemove));
+    setPreviews(previews.filter((_, index) => index !== indexToRemove));
   };
 
-  // Confirmar si el usuario no ha subido ninguna imagen
   const confirmNoPhotos = async () => {
     const result = await Swal.fire({
       title: 'No has subido ninguna imagen',
@@ -54,26 +52,15 @@ const ReservationPage = () => {
       confirmButtonText: 'Sí, continuar',
       cancelButtonText: 'Cancelar',
     });
-    return result.isConfirmed; // Retorna true si el usuario confirma
+    return result.isConfirmed;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // // Verificar si el teléfono está vacío
-    // if (!telefono) {
-    //   Swal.fire({
-    //     icon: 'warning',
-    //     title: 'Teléfono requerido',
-    //     text: 'Por favor, ingresa tu número de teléfono.',
-    //   });
-    //   return; // Salir si el teléfono no está ingresado
-    // }
-
-    // Verificar si no se han subido fotos, y preguntar al usuario
     if (photos.length === 0) {
-      const confirm = await confirmNoPhotos(); // Mostrar alerta de confirmación
-      if (!confirm) return; // Si el usuario cancela, no envía el formulario
+      const confirm = await confirmNoPhotos();
+      if (!confirm) return;
     }
 
     const formData = new FormData();
@@ -81,13 +68,14 @@ const ReservationPage = () => {
     formData.append('telefono', telefono);
     formData.append('email', email);
     formData.append('message', message);
-    formData.append('productId', id); // Enviar el ID del producto relacionado
+    formData.append('productId', id);
     formData.append('productName', name);
 
-    // Añadir todas las fotos a FormData
     photos.forEach((photo, index) => {
-      formData.append(`photos_${index}`, photo); // Fotos nombradas con índice
+      formData.append(`photos_${index}`, photo);
     });
+
+    setLoading(true); // Mostrar el indicador de carga
 
     try {
       const response = await fetch('http://localhost:5000/api/reservation', {
@@ -117,6 +105,8 @@ const ReservationPage = () => {
         title: 'Error en la conexión',
         text: 'Hubo un error al procesar la reserva. Verifica tu conexión e inténtalo nuevamente.',
       });
+    } finally {
+      setLoading(false); // Ocultar el indicador de carga
     }
   };
 
@@ -174,7 +164,7 @@ const ReservationPage = () => {
             className="reservation-page__file-input" 
             onChange={handleImageChange} 
             accept="image/*" 
-            multiple // Permitir múltiples archivos
+            multiple 
           />
           <div className="reservation-page__image-previews">
             {previews.map((preview, index) => (
@@ -191,7 +181,18 @@ const ReservationPage = () => {
             ))}
           </div>
         </div>
-        <button type="submit" className="reservation-page__button">Reservar</button>
+
+        {/* Mostrar el spinner en lugar del botón de reserva */}
+        {loading ? (
+          <div className="reservation-page__loading">
+            <ClipLoader color="#007bff" loading={loading} size={50} />
+            <p>Cargando...</p>
+          </div>
+        ) : (
+          <button type="submit" className="reservation-page__button">
+            Reservar
+          </button>
+        )}
       </form>
     </div>
   );
