@@ -10,6 +10,7 @@ cloudinary = "*"
 flask-sqlalchemy = "*"
 flask-cors = "*"
 flask-admin = "*"
+requests = "*"
 
 [dev-packages]
 
