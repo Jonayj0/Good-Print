@@ -104,7 +104,7 @@ def create_reservation():
                 send_confirmation_email(email_cliente, nombre_cliente, producto.name)
 
                 # Enviar correo al administrador
-                send_admin_notification(nombre_cliente, email_cliente, producto.name, mensaje, fotos_url)
+                send_admin_notification(nombre_cliente, email_cliente, producto.name, mensaje, fotos_url, telefono_cliente)
             except Exception as e:
                 print(f"Error al enviar correos: {str(e)}")
                 return jsonify({'message': 'Reserva creada, pero no se pudieron enviar los correos.'}), 500
@@ -128,7 +128,8 @@ def send_confirmation_email(to_email, nombre_cliente, producto_nombre):
         <html>
             <body>
                 <h2>Hola {nombre_cliente},</h2>
-                <p>Tu reserva para el producto <strong>{producto_nombre}</strong> ha sido confirmada.</p>
+                <p>Tu reserva para el producto:<br> 
+                <strong>{producto_nombre}</strong> ha sido confirmada.</p>
                 <p>Gracias por tu confianza.</p>
                 <p>¡Esperamos verte pronto!</p>
             </body>
@@ -143,14 +144,14 @@ def send_confirmation_email(to_email, nombre_cliente, producto_nombre):
 
 
 # Función para enviar notificación al administrador con imagen adjunta
-def send_admin_notification(nombre_cliente, email_cliente, producto_nombre, mensaje_cliente, fotos_url):
+def send_admin_notification(nombre_cliente, email_cliente, producto_nombre, mensaje_cliente, fotos_url, telefono_cliente):
     try:
         admin_email = 'elmundoenbandeja@gmail.com'
         msg = Message('Nueva Reserva Realizada', recipients=[admin_email])
 
         # Cuerpo del mensaje
         msg.body = (f"Se ha realizado una nueva reserva.\n\n"
-                    f"Cliente: {nombre_cliente}\nEmail: {email_cliente}\nProducto: {producto_nombre}\n"
+                    f"Cliente: {nombre_cliente}\nEmail: {email_cliente}\nProducto: {producto_nombre}\nTelefono: {telefono_cliente}\n"
                     f"Mensaje del cliente: {mensaje_cliente}\n")
 
         # Descargar la imagen desde Cloudinary y adjuntarla si existe una URL
