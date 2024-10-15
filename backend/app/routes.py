@@ -1,10 +1,12 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, current_app
 from app import db, mail
 from app.models import Product, Reserva
 import cloudinary
 import cloudinary.uploader
 from flask_mail import Message
 import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from flask import current_app as app
 
 main = Blueprint('main', __name__)
 
@@ -13,6 +15,8 @@ cloudinary.config(
     api_key='714796538293287',
     api_secret='T9xmi1bQu6iZ3k2yEOE0fd7nTlw'
 )
+
+executor = ThreadPoolExecutor()
 
 @main.route('/')
 def home():
@@ -33,10 +37,7 @@ def add_product():
 
 @main.route('/products', methods=['GET'])
 def get_products():
-    # Consulta para obtener todos los productos
     products = Product.query.all()
-    
-    # Transformar la consulta en una lista de diccionarios
     products_list = [
         {
             "id": product.id,
@@ -47,8 +48,6 @@ def get_products():
         }
         for product in products
     ]
-    
-    # Devolver la lista de productos como JSON
     return jsonify(products_list), 200
 
 #-------------------------------------------------RESERVAS----------------------------------
@@ -66,16 +65,14 @@ def create_reservation():
 
         print("Product ID:", producto_id)
 
-        # Obtener todas las imágenes del formulario
         fotos = None
         for key in request.files:
             fotos = request.files[key]
             print(f"Imagen recibida: {key} - {fotos.filename}")
 
         if fotos:
-            # Subir la foto a Cloudinary
             upload_response = cloudinary.uploader.upload(fotos)
-            fotos_url = upload_response['secure_url']  # URL de la foto en Cloudinary
+            fotos_url = upload_response['secure_url']
             print(f"Foto guardada en Cloudinary: {fotos_url}")
         else:
             fotos_url = None
@@ -98,16 +95,11 @@ def create_reservation():
             db.session.add(reserva)
             db.session.commit()
 
-            # Intentar enviar correos
-            try:
-                # Enviar correo de confirmación al cliente
-                send_confirmation_email(email_cliente, nombre_cliente, producto.name)
-
-                # Enviar correo al administrador
-                send_admin_notification(nombre_cliente, email_cliente, producto.name, mensaje, fotos_url, telefono_cliente)
-            except Exception as e:
-                print(f"Error al enviar correos: {str(e)}")
-                return jsonify({'message': 'Reserva creada, pero no se pudieron enviar los correos.'}), 500
+            # Ejecutar las funciones de correo dentro del contexto de la app
+            with app.app_context():
+                # Enviar correos en segundo plano asegurando el contexto correcto
+                executor.submit(send_confirmation_email, app._get_current_object(), email_cliente, nombre_cliente, producto.name)
+                executor.submit(send_admin_notification, app._get_current_object(), nombre_cliente, email_cliente, producto.name, mensaje, fotos_url, telefono_cliente)
 
             return jsonify({'message': 'Reserva creada exitosamente!'}), 201
         else:
@@ -116,57 +108,45 @@ def create_reservation():
         print(f"Error al crear la reserva: {str(e)}")
         return jsonify({'message': 'Hubo un error al crear la reserva.'}), 500
 
-
 #--------------------------------------------FUNCIONES----------------------------------------------------------------
-# Función para enviar correo al cliente
-def send_confirmation_email(to_email, nombre_cliente, producto_nombre):
-    try:
-        msg = Message('Confirmación de Reserva', recipients=[to_email])
-        
-        # Cuerpo del mensaje en HTML
-        msg.html = f"""
-        <html>
-            <body>
-                <h2>Hola {nombre_cliente},</h2>
-                <p>Tu reserva para el producto:<br> 
-                <strong>{producto_nombre}</strong> ha sido confirmada.</p>
-                <p>Gracias por tu confianza.</p>
-                <p>¡Esperamos verte pronto!</p>
-            </body>
-        </html>
-        """
-        
-        mail.send(msg)
-    except Exception as e:
-        print(f"Error al enviar correo de confirmación: {str(e)}")
-        raise  # Vuelve a lanzar la excepción para manejarla en la función `create_reservation`
+def send_confirmation_email(app, to_email, nombre_cliente, producto_nombre):
+    with app.app_context():
+        try:
+            msg = Message('Confirmación de Reserva', recipients=[to_email])
+            msg.html = f"""
+            <html>
+                <body>
+                    <h2>Hola {nombre_cliente},</h2>
+                    <p>Tu reserva para el producto:<br> 
+                    <strong>{producto_nombre}</strong> ha sido confirmada.</p>
+                    <p>Gracias por tu confianza.</p>
+                    <p>¡Esperamos verte pronto!</p>
+                </body>
+            </html>
+            """
+            mail.send(msg)
+        except Exception as e:
+            print(f"Error al enviar correo de confirmación: {str(e)}")
+            raise
 
+def send_admin_notification(app, nombre_cliente, email_cliente, producto_nombre, mensaje_cliente, fotos_url, telefono_cliente):
+    with app.app_context():
+        try:
+            admin_email = 'elmundoenbandeja@gmail.com'
+            msg = Message('Nueva Reserva Realizada', recipients=[admin_email])
+            msg.body = (f"Se ha realizado una nueva reserva.\n\n"
+                        f"Cliente: {nombre_cliente}\nEmail: {email_cliente}\nProducto: {producto_nombre}\nTelefono: {telefono_cliente}\n"
+                        f"Mensaje del cliente: {mensaje_cliente}\n")
 
-
-# Función para enviar notificación al administrador con imagen adjunta
-def send_admin_notification(nombre_cliente, email_cliente, producto_nombre, mensaje_cliente, fotos_url, telefono_cliente):
-    try:
-        admin_email = 'elmundoenbandeja@gmail.com'
-        msg = Message('Nueva Reserva Realizada', recipients=[admin_email])
-
-        # Cuerpo del mensaje
-        msg.body = (f"Se ha realizado una nueva reserva.\n\n"
-                    f"Cliente: {nombre_cliente}\nEmail: {email_cliente}\nProducto: {producto_nombre}\nTelefono: {telefono_cliente}\n"
-                    f"Mensaje del cliente: {mensaje_cliente}\n")
-
-        # Descargar la imagen desde Cloudinary y adjuntarla si existe una URL
-        if fotos_url:
-            print(f"Descargando imagen de: {fotos_url}")
-            response = requests.get(fotos_url)  # Descargar la imagen
-            if response.status_code == 200:
-                print("Imagen descargada correctamente, adjuntando al correo.")
-                msg.attach("imagen.jpg", "image/jpeg", response.content)  # Adjuntar la imagen
-            else:
-                print(f"Error al descargar la imagen desde Cloudinary: Status {response.status_code}")
-        
-        # Enviar el correo
-        mail.send(msg)
-        print("Correo enviado correctamente")
-    except Exception as e:
-        print(f"Error al enviar notificación al administrador: {str(e)}")
-        raise
+            if fotos_url:
+                response = requests.get(fotos_url)
+                if response.status_code == 200:
+                    msg.attach("imagen.jpg", "image/jpeg", response.content)
+                else:
+                    print(f"Error al descargar la imagen desde Cloudinary: Status {response.status_code}")
+            
+            mail.send(msg)
+            print("Correo enviado correctamente")
+        except Exception as e:
+            print(f"Error al enviar notificación al administrador: {str(e)}")
+            raise
