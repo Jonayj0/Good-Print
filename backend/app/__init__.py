@@ -6,6 +6,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_mail import Mail
 
+
 db = SQLAlchemy()
 migrate = Migrate()
 admin = Admin(name='Admin', template_mode='bootstrap3')
@@ -36,6 +37,9 @@ def create_app():
 
     from app.routes import main
     from app import models, routes
+    # Mueve la importación aquí
+    from app.models import User
+    admin.add_view(ModelView(User, db.session))  # Añade la vista para el modelo User
 
     # Añade vistas de admin
     admin.add_view(ModelView(models.Product, db.session))
