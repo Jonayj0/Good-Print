@@ -1,0 +1,83 @@
+/* login.css */
+.login-container {
+    display: flex;
+    flex-direction: column; /* Alinea los elementos verticalmente */
+    justify-content: center; /* Centra verticalmente */
+    align-items: center; /* Centra horizontalmente */
+    background-color: #abeefb; /* Fondo suave */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    padding: 40px 20px; /* Espaciado interno */
+    width: 90%; /* Ancho del contenedor */
+    max-width: 400px; /* Ancho máximo */
+    margin: auto; /* Centra el contenedor en la página */
+    transition: transform 0.3s; /* Transición suave al hover */
+    margin-bottom: 10rem;
+}
+
+.login-container:hover {
+    transform: scale(1.02); /* Efecto de escala al pasar el ratón */
+}
+
+.login-title {
+    text-align: center; /* Centramos el texto */
+    color: #333; /* Color del texto */
+    margin-bottom: 30px; /* Espacio debajo del título */
+    font-size: 26px; /* Tamaño de fuente */
+}
+
+.login-input {
+    width: 100%; /* Ancho completo */
+    padding: 15px; /* Espaciado interno */
+    margin: 10px 0; /* Espaciado superior e inferior */
+    border: 1px solid #ccc; /* Borde gris */
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 16px; /* Tamaño de fuente */
+    transition: border-color 0.3s; /* Transición suave */
+    background-color: aliceblue;
+    color: #414144;
+}
+
+.login-input:focus {
+    border-color: #007bff; /* Color de borde al hacer foco */
+    outline: none; /* Eliminar el borde de enfoque predeterminado */
+}
+
+.login-button {
+    width: 100%; /* Ancho completo */
+    padding: 15px; /* Espaciado interno */
+    background-color: #007bff; /* Color de fondo del botón */
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 16px; /* Tamaño de fuente */
+    cursor: pointer; /* Cambia el cursor al pasar el ratón */
+    transition: background-color 0.3s; /* Transición suave */
+}
+
+.login-button:hover {
+    background-color: #0056b3; /* Color más oscuro al pasar el ratón */
+}
+
+.error-message {
+    color: red; /* Color del texto de error */
+    margin-top: 10px; /* Espacio encima del mensaje de error */
+}
+
+@media (max-width: 600px) {
+    .login-container {
+        padding: 20px; /* Ajustar el espaciado en pantallas pequeñas */
+    }
+
+    .login-title {
+        font-size: 22px; /* Ajustar el tamaño del título en pantallas pequeñas */
+    }
+
+    .login-input {
+        font-size: 14px; /* Ajustar el tamaño de la fuente en pantallas pequeñas */
+    }
+
+    .login-button {
+        font-size: 14px; /* Ajustar el tamaño de la fuente en el botón en pantallas pequeñas */
+    }
+}
