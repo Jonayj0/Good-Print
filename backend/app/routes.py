@@ -1,12 +1,16 @@
 from flask import Blueprint, jsonify, request, current_app
 from app import db, mail
-from app.models import Product, Reserva
+from app.models import Product, Reserva, User
 import cloudinary
 import cloudinary.uploader
 from flask_mail import Message
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from flask import current_app as app
+from werkzeug.security import check_password_hash
+from datetime import datetime, timedelta
+import jwt
+from functools import wraps
 
 main = Blueprint('main', __name__)
 
@@ -150,3 +154,98 @@ def send_admin_notification(app, nombre_cliente, email_cliente, producto_nombre,
         except Exception as e:
             print(f"Error al enviar notificación al administrador: {str(e)}")
             raise
+
+def token_required(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        token = None
+
+        # Verifica si el token está en los encabezados
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization'].split(" ")[1] # "Bearer <token>"
+
+        if not token:
+            return jsonify({'mesage': 'Token is missing!'}), 403
+        
+        try:
+            # Decodifica el token usando la clave secreta
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = User.query.get(data['user_id']) # Obtén el usuario de la base de datos
+        except Exception as e:
+            print(str(e))
+            return jsonify({'mesage': 'token is invalid!'}), 403
+        
+        return f(current_user, *args, **kwargs) # Pasa el usuario actual a la función decorada
+    
+    return decorator
+
+
+#--------------------------------------------LOGIN----------------------------------------------------------------
+#--------------------------------------------LOGIN----------------------------------------------------------------
+@main.route('/login', methods=['POST'])
+def login():
+    data = request.get_json() # Obtener los datos enviados (email y password)
+
+    if not data or not data.get('email') or not data.get('password'):
+        return jsonify({'message': 'Faltan datos'}), 400 # Validación simple de datos
+    
+    user = User.query.filter_by(email=data['email']).first() # Buscar usuario por email
+
+    if not user:
+        return jsonify({'message': 'Usuario no encontrado'}), 404
+    
+    if not check_password_hash(user.password, data['password']): # Verificar contraseñas
+        return jsonify({'message': 'Contraseña incorrecta'}), 401 
+    
+    # Crear el token JWT válido por 30 minutos
+    token = jwt.encode({
+        'user_id': user.id,
+        'exp': datetime.utcnow() + timedelta(minutes=30)
+    }, current_app.config['SECRET_KEY'], algorithm="HS256")
+
+    return jsonify({'token': token}), 200 # Devolver el token JWT al cliente
+
+
+# @main.route('/admin', methods=['GET'])
+# @token_required  # Aplica el decorador aquí
+# def admin_only_route(current_user):
+#     if not current_user.is_admin:  # Verifica si el usuario es administrador
+#         return jsonify({'message': 'You do not have permission to access this resource.'}), 403
+    
+#     return jsonify({'message': 'Welcome to the admin panel!'}), 200
+
+
+# Ruta protegida para obtener productos (solo para admin)
+@main.route('/admin/products', methods=['GET'])
+@token_required
+def get_admin_products(current_user):
+    products = Product.query.all()
+    products_list = [
+        {
+            "id": product.id,
+            "name": product.name,
+            "description": product.description,
+            "price": product.price,
+            "image_url": product.image_url
+        }
+        for product in products
+    ]
+    return jsonify(products_list), 200
+
+# Ruta protegida para añadir un nuevo producto (solo para admin)
+@main.route('/admin/products/add', methods=['POST'])
+@token_required
+def add_admin_product():  # Cambiado el nombre de la función aquí
+    data = request.get_json()
+    
+    new_product = Product(
+        name=data['name'],
+        description=data['description'],
+        price=data['price'],
+        image_url=data.get('image_url', None)
+    )
+    
+    db.session.add(new_product)
+    db.session.commit()
+    
+    return jsonify({"message": "Product added successfully!"}), 201
