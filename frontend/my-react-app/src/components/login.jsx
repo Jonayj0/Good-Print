@@ -7,8 +7,8 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(''); // Estado para manejar errores
-    const navigate = useNavigate(); // Usa useNavigate en lugar de useHistory
     const { actions } = useContext(Context); // Obtén las acciones del context
+    const navigate = useNavigate(); // Usa useNavigate en lugar de useHistory
 
     const handleLogin = async (e) => {
         e.preventDefault();

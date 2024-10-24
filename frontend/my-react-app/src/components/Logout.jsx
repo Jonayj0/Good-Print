@@ -1,15 +1,15 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Context } from '../store/AppContext';
 import "../style/logout.css"; // Asegúrate de importar el CSS
 
 const Logout = () => {
+    const { actions } = useContext(Context);
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        // Eliminar el token del localStorage
-        localStorage.removeItem('token');
-        // Redirigir al admin al login
-        navigate('/login');
+        actions.logout(); // Llama a la acción de logout en flux
+        navigate('/login'); // Redirige al usuario a la página de login
     };
 
     return (

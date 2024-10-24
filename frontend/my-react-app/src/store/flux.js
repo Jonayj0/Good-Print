@@ -41,21 +41,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return { success: false, message: error.message };
                 }
             },
-            // getProducts: async () => {
-            //     try {
-            //         const url = import.meta.env.VITE_API_BASE_URL + "/products";
-            //         console.log('Fetching products from:', url);
-            //         const response = await fetch(url);
-            //         if (!response.ok) throw new Error("Failed to fetch products");
-                    
-            //         const products = await response.json();
-            //         console.log('Fetched products:', products); // Asegúrate de que los productos se obtienen correctamente
-            //         setStore({ products });
-            //     } catch (error) {
-            //         console.error("Error fetching products:", error);
-            //     }
-            // },
-            // Define otras acciones aquí
+
+            logout: () => {
+                localStorage.removeItem('token'); // Elimina el token del localStorage
+                setStore({ user: null }); // Limpia el usuario del store si tienes uno
+            },
+            
             getProducts: async (isAdmin = false) => {
                 try {
                     let url = import.meta.env.VITE_API_BASE_URL + "/products";
@@ -91,6 +82,21 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error fetching products:", error);
                 }
             },
+            // getProducts: async () => {
+            //     try {
+            //         const url = import.meta.env.VITE_API_BASE_URL + "/products";
+            //         console.log('Fetching products from:', url);
+            //         const response = await fetch(url);
+            //         if (!response.ok) throw new Error("Failed to fetch products");
+            
+            //         const products = await response.json();
+            //         console.log('Fetched products:', products); // Asegúrate de que los productos se obtienen correctamente
+            //         setStore({ products });
+            //     } catch (error) {
+            //         console.error("Error fetching products:", error);
+            //     }
+            // },
+            // Define otras acciones aquí
             
         },
     };
