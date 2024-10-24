@@ -6,6 +6,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             message: null,
             products: [],
             selectedProduct: null,
+            user: null,
             // Añade otros estados iniciales aquí
         },
         actions: {
@@ -16,6 +17,28 @@ const getState = ({ getStore, getActions, setStore }) => {
                     setStore({ message: data.message });
                 } catch (error) {
                     console.error("Error fetching message:", error);
+                }
+            },
+            login: async (email, password) => {
+                try {
+                    const response = await fetch(import.meta.env.VITE_API_BASE_URL + "/login", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email, password }),
+                    });
+
+                    if (!response.ok) throw new Error('Error en el inicio de sesión');
+
+                    const { token, user } = await response.json();
+                    localStorage.setItem('token', token); // Guarda el token en localStorage
+                    setStore({ user }); // Almacena la información del usuario en el store
+
+                    return { success: true };
+                } catch (error) {
+                    console.error("Error en el login:", error);
+                    return { success: false, message: error.message };
                 }
             },
             // getProducts: async () => {

@@ -1,30 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import "../style/login.css"; // Asegúrate de importar el CSS
+import { Context } from '../store/AppContext';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(''); // Estado para manejar errores
     const navigate = useNavigate(); // Usa useNavigate en lugar de useHistory
+    const { actions } = useContext(Context); // Obtén las acciones del context
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        const response = await fetch('http://localhost:5000/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
+        const result = await actions.login(email, password); // Llama a la acción login
 
-        if (response.ok) {
-            const { token } = await response.json();
-            localStorage.setItem('token', token); // Guarda el token
-            navigate('/admin/products'); // Redirige usando navigate
+        if (result.success) {
+            navigate('/admin/products'); // Redirige a la ruta protegida
         } else {
-            setError('Error en el inicio de sesión.'); // Establecer el mensaje de error
+            setError(result.message || 'Error en el inicio de sesión');
         }
     };
 
