@@ -1,42 +1,39 @@
 // src/views/adminProducts.jsx
-import React, { useEffect, useState } from 'react';
+import { useContext, useEffect } from "react";
+import { Context } from "../store/AppContext";
+import CardProductsAdmin from "../components/card-products-admin.jsx";
 
-const AdminProducts = () => {
-    const [products, setProducts] = useState([]);
+function AdminProducts() {
+    const { store, actions } = useContext(Context);
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            const response = await fetch('http://localhost:5000/admin/products', {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}` // Incluye el token en la cabecera
-                }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setProducts(data);
-            } else {
-                console.error('Failed to fetch products');
-            }
-        };
-
-        fetchProducts();
-    }, []);
+        // Llama a getProducts con isAdmin=true para obtener los productos protegidos
+        actions.getProducts(true).catch(error => {
+            console.error("Error fetching admin products:", error);
+        });
+    }, [actions]);
 
     return (
-        <div className='container admin-products'>
-            <h1>Productos Administrativos</h1>
-            <ul>
-                {products.map(product => (
-                    <li key={product.id}>
-                        <h2>{product.name}</h2>
-                        <p>{product.description}</p>
-                        <p>Precio: ${product.price}</p>
-                    </li>
-                ))}
-            </ul>
+        <div className="admin-products-container container">
+            <h1 className="titulo-admin-products text-center mb-3">Administrar Productos</h1>
+            <section className="card-producto container mb-5 d-flex justify-content-evenly">
+                {Array.isArray(store.products) && store.products.length > 0 ? (
+                    store.products.map(product => (
+                        <CardProductsAdmin
+                            key={product.id}
+                            id={product.id}
+                            name={product.name || 'Unknown Name'}
+                            description={product.description || 'No description available'}
+                            price={product.price || 0}
+                            image_url={product.image_url || 'default-image-url.jpg'}
+                        />
+                    ))
+                ) : (
+                    <p>No products available</p>
+                )}
+            </section>
         </div>
     );
-};
+}
 
 export default AdminProducts;
