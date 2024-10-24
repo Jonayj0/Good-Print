@@ -1,9 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "../style/navbar.css"
 import logo from "../assets/Definitivo-ok.png"
+import Logout from "../components/Logout";
 
 function Navbar() {
+
+    const location = useLocation(); // Para obtener la ruta actual
+    const token = localStorage.getItem('token'); // Verifica si hay un token
+
     return (
         <>
             <nav className="navbar container navbar-expand-lg">
@@ -32,11 +37,11 @@ function Navbar() {
                                     Home
                                 </Link>
                             </li>
-                            <li className="nav-item">
+                            {/* <li className="nav-item">
                                 <Link className="nav-link active" to="/api-view">
                                     API View
                                 </Link>
-                            </li>
+                            </li> */}
                             <li className="nav-item">
                             <Link className="nav-link active" to="/nosotros">
                                     Nosotros
@@ -73,6 +78,12 @@ function Navbar() {
                                     </li>
                                 </ul>
                             </li>
+                            {/* Mostrar el botón de logout solo si hay token y la ruta es /admin/products */}
+                            {token && location.pathname === '/admin/products' && (
+                                <li>
+                                    <Logout />
+                                </li>
+                            )}
                         </ul>
                         <form className="form d-flex" role="search">
                             <input
