@@ -6,6 +6,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             message: null,
             products: [],
             selectedProduct: null,
+            user: null,
             // Añade otros estados iniciales aquí
         },
         actions: {
@@ -18,21 +19,85 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error fetching message:", error);
                 }
             },
-            getProducts: async () => {
+            login: async (email, password) => {
                 try {
-                    const url = import.meta.env.VITE_API_BASE_URL + "/products";
-                    console.log('Fetching products from:', url);
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error("Failed to fetch products");
+                    const response = await fetch(import.meta.env.VITE_API_BASE_URL + "/login", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email, password }),
+                    });
+
+                    if (!response.ok) throw new Error('Error en el inicio de sesión');
+
+                    const { token, user } = await response.json();
+                    localStorage.setItem('token', token); // Guarda el token en localStorage
+                    setStore({ user }); // Almacena la información del usuario en el store
+
+                    return { success: true };
+                } catch (error) {
+                    console.error("Error en el login:", error);
+                    return { success: false, message: error.message };
+                }
+            },
+
+            logout: () => {
+                localStorage.removeItem('token'); // Elimina el token del localStorage
+                setStore({ user: null }); // Limpia el usuario del store si tienes uno
+            },
+            
+            getProducts: async (isAdmin = false) => {
+                try {
+                    let url = import.meta.env.VITE_API_BASE_URL + "/products";
                     
-                    const products = await response.json();
-                    console.log('Fetched products:', products); // Asegúrate de que los productos se obtienen correctamente
-                    setStore({ products });
+                    if (isAdmin) {
+                        url = import.meta.env.VITE_API_BASE_URL + "/admin/products"; // Ruta protegida para admin
+                        const token = localStorage.getItem('token'); // Obtén el token del localStorage
+                        if (!token) {
+                            console.error("No token found!");
+                            return;
+                        }
+            
+                        const response = await fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`, // Incluye el token en la solicitud si es admin
+                            },
+                        });
+            
+                        if (!response.ok) throw new Error("Failed to fetch admin products");
+            
+                        const products = await response.json();
+                        setStore({ products });
+                    } else {
+                        const response = await fetch(url); // Para productos normales (sin autenticación)
+                        if (!response.ok) throw new Error("Failed to fetch products");
+            
+                        const products = await response.json();
+                        setStore({ products });
+                    }
                 } catch (error) {
                     console.error("Error fetching products:", error);
                 }
             },
+            // getProducts: async () => {
+            //     try {
+            //         const url = import.meta.env.VITE_API_BASE_URL + "/products";
+            //         console.log('Fetching products from:', url);
+            //         const response = await fetch(url);
+            //         if (!response.ok) throw new Error("Failed to fetch products");
+            
+            //         const products = await response.json();
+            //         console.log('Fetched products:', products); // Asegúrate de que los productos se obtienen correctamente
+            //         setStore({ products });
+            //     } catch (error) {
+            //         console.error("Error fetching products:", error);
+            //     }
+            // },
             // Define otras acciones aquí
+            
         },
     };
 };
