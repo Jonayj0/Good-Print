@@ -73,6 +73,39 @@ const getState = ({ getStore, getActions, setStore }) => {
                 } catch (error) {
                     console.error("Error fetching products:", error);
                 }
+            },
+
+            // Nueva función para añadir un producto
+            addProduct: async (productData) => {
+                try {
+                    const url = import.meta.env.VITE_API_BASE_URL + "/admin/products/add"; // Ruta para añadir productos
+                    const token = localStorage.getItem('token');
+
+                    // Verifica si hay un token antes de proceder
+                    if (!token) {
+                        console.error("No token found!");
+                        return;
+                    }
+
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}` // Incluye el token en la solicitud
+                        },
+                        body: JSON.stringify(productData) // Envía los datos del nuevo producto
+                    });
+
+                    if (!response.ok) throw new Error("Failed to add product");
+
+                    const result = await response.json();
+                    console.log(result.message); // Mensaje de éxito
+
+                    // Actualiza la lista de productos después de añadir uno nuevo
+                    await getActions().getProducts(true); // Llama a getProducts para refrescar la lista
+                } catch (error) {
+                    console.error("Error adding product:", error);
+                }
             },            
         },
     };
