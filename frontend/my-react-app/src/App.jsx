@@ -9,6 +9,7 @@ import ReservationPage from './views/reservationPage';
 import LoginView from './views/loginView';
 import AdminProducts from './views/adminProducts';
 import ProtectedRoute from './components/ProtectedRoute';
+import AddProduct from './views/addProduct';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/reservar/:id/:name" element={<ReservationPage />} />
           <Route path="/login" element={<LoginView />} />
           <Route path="/admin/products" element={<ProtectedRoute element={AdminProducts} />} />
+          <Route path="/admin/products/add" element={<ProtectedRoute element={AddProduct} />} />
         </Routes>
         <Footer />
       </div>

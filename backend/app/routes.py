@@ -155,6 +155,8 @@ def send_admin_notification(app, nombre_cliente, email_cliente, producto_nombre,
             print(f"Error al enviar notificación al administrador: {str(e)}")
             raise
 
+# 
+
 def token_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
@@ -165,19 +167,25 @@ def token_required(f):
             token = request.headers['Authorization'].split(" ")[1] # "Bearer <token>"
 
         if not token:
-            return jsonify({'mesage': 'Token is missing!'}), 403
+            return jsonify({'message': 'Token is missing!'}), 403
         
         try:
             # Decodifica el token usando la clave secreta
             data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user = User.query.get(data['user_id']) # Obtén el usuario de la base de datos
+
+            # Verifica el rol del usuario
+            if not current_user.is_admin:
+                return jsonify({'message': 'Unauthorized access - Admin only'}), 403
+        
         except Exception as e:
             print(str(e))
-            return jsonify({'mesage': 'token is invalid!'}), 403
+            return jsonify({'message': 'Token is invalid!'}), 403
         
         return f(current_user, *args, **kwargs) # Pasa el usuario actual a la función decorada
     
     return decorator
+
 
 
 #--------------------------------------------LOGIN----------------------------------------------------------------
@@ -233,19 +241,52 @@ def get_admin_products(current_user):
     return jsonify(products_list), 200
 
 # Ruta protegida para añadir un nuevo producto (solo para admin)
+# @main.route('/admin/products/add', methods=['POST'])
+# @token_required
+# def add_admin_product():  # Cambiado el nombre de la función aquí
+#     data = request.get_json()
+    
+#     new_product = Product(
+#         name=data['name'],
+#         description=data['description'],
+#         price=data['price'],
+#         image_url=data.get('image_url', None)
+#     )
+    
+#     db.session.add(new_product)
+#     db.session.commit()
+    
+#     return jsonify({"message": "Product added successfully!"}), 201
+
+# Ruta protegida para añadir un nuevo producto (solo para admin)
 @main.route('/admin/products/add', methods=['POST'])
 @token_required
-def add_admin_product():  # Cambiado el nombre de la función aquí
+def add_admin_product(current_user):
     data = request.get_json()
     
-    new_product = Product(
-        name=data['name'],
-        description=data['description'],
-        price=data['price'],
-        image_url=data.get('image_url', None)
-    )
+    # Validar campos requeridos
+    if not all(key in data for key in ['name', 'description', 'price']):
+        return jsonify({"error": "Missing required product fields"}), 400
     
-    db.session.add(new_product)
-    db.session.commit()
+    try:
+        new_product = Product(
+            name=data['name'],
+            description=data['description'],
+            price=data['price'],
+            image_url=data.get('image_url', None)
+        )
+        
+        db.session.add(new_product)
+        db.session.commit()
+        
+        return jsonify({"message": "Product added successfully!"}), 201
     
-    return jsonify({"message": "Product added successfully!"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to add product", "details": str(e)}), 500
+
+# Al final del archivo, imprime las rutas disponibles
+@main.route('/test', methods=['GET'])
+def test():
+    return jsonify({"message": "Test route is working!"}), 200
+
