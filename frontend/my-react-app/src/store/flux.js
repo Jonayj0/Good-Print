@@ -28,13 +28,17 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify({ email, password }),
                     });
-
+            
                     if (!response.ok) throw new Error('Error en el inicio de sesión');
-
+            
                     const { token, user } = await response.json();
+                    
+                    // Establecer el tiempo de expiración a 30 minutos desde ahora
+                    const expirationTime = Date.now() + 30 * 60 * 1000; // 30 minutos en milisegundos
                     localStorage.setItem('token', token); // Guarda el token en localStorage
+                    localStorage.setItem('tokenExpiration', expirationTime); // Guarda el tiempo de expiración
                     setStore({ user }); // Almacena la información del usuario en el store
-
+            
                     return { success: true };
                 } catch (error) {
                     console.error("Error en el login:", error);
@@ -44,8 +48,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             logout: () => {
                 localStorage.removeItem('token'); // Elimina el token del localStorage
+                localStorage.removeItem('tokenExpiration'); // Elimina el tiempo de expiración
                 setStore({ user: null }); // Limpia el usuario del store si tienes uno
             },
+            
             
             getProducts: async (isAdmin = false) => {
                 try {
