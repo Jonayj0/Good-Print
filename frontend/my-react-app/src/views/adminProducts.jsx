@@ -3,6 +3,7 @@ import { useContext, useEffect } from "react";
 import { Context } from "../store/AppContext";
 import CardProductsAdmin from "../components/card-products-admin.jsx";
 import { Link } from "react-router-dom";
+import "../style/adminProducts.css";
 
 function AdminProducts() {
     const { store, actions } = useContext(Context);
@@ -33,9 +34,11 @@ function AdminProducts() {
                     <p>No products available</p>
                 )}
             </section>
-                <button><Link to="/admin/products/add" className="btn btn-primary">
+            <div className="button-add-product mb-5">
+                <button className="btn"><Link to="/admin/products/add" className="btn btn-primary">
                 Añadir Producto
                 </Link></button>
+            </div>
         </div>
     );
 }
