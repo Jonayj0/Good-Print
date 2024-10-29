@@ -106,6 +106,37 @@ const getState = ({ getStore, getActions, setStore }) => {
                 } catch (error) {
                     console.error("Error adding product:", error);
                 }
+            },
+            addProductWithImage: async (productData, imageFile) => {
+                let finalImageUrl = productData.image_url;
+        
+                // Subir imagen a Cloudinary si se selecciona un archivo
+                if (imageFile) {
+                    const formData = new FormData();
+                    formData.append('file', imageFile);
+                    formData.append('upload_preset', 'preset_good_print'); // Cambia por tu upload preset
+        
+                    try {
+                        const response = await fetch(`https://api.cloudinary.com/v1_1/dtxkcfugs/image/upload`, {
+                            method: 'POST',
+                            body: formData
+                        });
+        
+                        if (response.ok) {
+                            const data = await response.json();
+                            finalImageUrl = data.secure_url; // Asigna la URL de Cloudinary
+                        } else {
+                            throw new Error('Error en la respuesta de Cloudinary');
+                        }
+                    } catch (error) {
+                        console.error('Error al subir la imagen:', error);
+                        throw new Error('No se pudo subir la imagen. Intenta nuevamente.'); // Lanza el error para que se maneje en el componente
+                    }
+                }
+        
+                // Finalmente, agrega el producto
+                productData.image_url = finalImageUrl; // Usa la URL final de la imagen (de Cloudinary o directa)
+                await getActions().addProduct(productData); // Llama a la acción original para añadir el producto
             },            
         },
     };

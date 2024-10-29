@@ -20,47 +20,15 @@ function AddProduct() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Variable para almacenar la URL final de la imagen
-        let finalImageUrl = imageUrl;
-
-        // Subir imagen a Cloudinary si se selecciona un archivo
-        if (imageFile) {
-            const formData = new FormData();
-            formData.append('file', imageFile);
-            formData.append('upload_preset', 'preset_good_print'); // Cambia por tu upload preset
-
-            try {
-                const response = await fetch(`https://api.cloudinary.com/v1_1/dtxkcfugs/image/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    finalImageUrl = data.secure_url; // Asigna la URL de Cloudinary
-                } else {
-                    throw new Error('Error en la respuesta de Cloudinary');
-                }
-            } catch (error) {
-                console.error('Error al subir la imagen:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error al cargar imagen',
-                    text: 'No se pudo subir la imagen. Intenta nuevamente.',
-                });
-                return; // Detenemos el proceso si hay un error con Cloudinary
-            }
-        }
-
         const productData = {
             name,
             description,
             price,
-            image_url: finalImageUrl, // URL final de la imagen (de Cloudinary o directa)
+            image_url: imageUrl // URL directa, si se ha proporcionado
         };
 
         try {
-            await actions.addProduct(productData); // Añade el producto
+            await actions.addProductWithImage(productData, imageFile); // Llama a la nueva acción que maneja la carga de imágenes
             Swal.fire({
                 icon: 'success',
                 title: 'Producto añadido',
@@ -72,7 +40,7 @@ function AddProduct() {
             Swal.fire({
                 icon: 'error',
                 title: 'Error al añadir producto',
-                text: 'No se pudo añadir el producto. Intenta nuevamente.',
+                text: error.message || 'No se pudo añadir el producto. Intenta nuevamente.',
             });
         }
     };
