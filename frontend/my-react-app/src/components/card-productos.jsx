@@ -1,28 +1,46 @@
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import { useState } from "react";
 import "../style/card-productos.css";
 
 function CardProductos({ id, name, description, price, image_url }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const toggleExpand = () => setIsExpanded(!isExpanded);
+
+  // Limitar el texto inicialmente y expandirlo con el botón
+  const truncatedDescription = description.slice(0, 100) + (description.length > 100 ? "..." : "");
+
   return (
-    <div className="tarjeta-productos" style={{ width: "18rem" }}>
+    <div className="tarjeta-productos">
       <img src={image_url} className="card-img-top" alt={name} />
       <div className="card-body">
         <h5 className="card-title">{name}</h5>
-        <p className="card-text">{description}</p>
-        <p className="card-text">
-          <strong>Price: </strong>
-          {price}
-          <strong>€</strong>
+
+        {/* Mostrar texto completo si está expandido o el texto truncado */}
+        <p className={`card-text ${isExpanded ? "expanded" : ""}`}>
+          {isExpanded ? description : truncatedDescription}
         </p>
-        <Link to="/product-details" className="btn btn-primary">
-          Ver Detalles
-        </Link>
-        <Link
-          to={`/reservar/${id}/${encodeURIComponent(name)}`}
-          className="btn btn-success ms-2"
-        >
-          Reservar
-        </Link>
+
+        {/* Botón para mostrar más o menos texto */}
+        {description.length > 100 && (
+          <span className="leer-mas" onClick={toggleExpand}>
+            {isExpanded ? " Ver menos" : " Leer más"}
+          </span>
+        )}
+
+        <p className="card-text">
+          <strong>Precio: </strong>
+          {price} <strong>€</strong>
+        </p>
+
+        <div className="card-buttons">
+          <Link to="/product-details" className="btn btn-primary">
+            Detalles
+          </Link>
+          <Link to={`/reservar/${id}/${encodeURIComponent(name)}`} className="btn btn-success">
+            Reservar
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -37,4 +55,3 @@ CardProductos.propTypes = {
 };
 
 export default CardProductos;
-
