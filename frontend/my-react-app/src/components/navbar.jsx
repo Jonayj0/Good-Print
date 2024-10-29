@@ -84,16 +84,25 @@ function Navbar() {
                                     <Logout />
                                 </li>
                             )}
+                            {token && location.pathname === '/admin/products/add' && (
+                                <li>
+                                    <button className="btn btn-outline-success me-2" type="submit">
+                                        <Link to="admin/products" className="text-black">
+                                        Admin
+                                        </Link>
+                                    </button>
+                                </li>
+                            )}
                         </ul>
                         <form className="form d-flex" role="search">
                             <input
                                 className="form-control me-2"
                                 type="search"
-                                placeholder="Search"
+                                placeholder="Buscar"
                                 aria-label="Search"
                             />
                             <button className="btn btn-outline-success" type="submit">
-                                Search
+                                Buscar
                             </button>
                         </form>
                     </div>
