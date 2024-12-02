@@ -13,12 +13,12 @@ function CardProductsAdmin({ id, name, description, price, image_url }) {
                 <i className="fa-solid fa-trash" />
                     
             </button>
-            <img src={image_url} className="card-img-top" alt={name} />
+            <img src={image_url} className="card-img-top mt-2" alt={name} />
                 <div className="card-body">
                         <h5 className="card-title">{name}</h5>
                         <p className="card-text">{description}</p>
                         <p className="card-text">
-                            <strong>Price: </strong>
+                            <strong>Precio: </strong>
                             {price}
                             <strong>€</strong>
                         </p>
@@ -27,7 +27,7 @@ function CardProductsAdmin({ id, name, description, price, image_url }) {
                     </Link>
                     <Link
                         to={`/reservar/${id}/${encodeURIComponent(name)}`}
-                        className="btn btn-success ms-2"
+                        className="btn btn-success"
                     >
                         Reservar
                     </Link>
