@@ -123,6 +123,9 @@ Abre tu navegador y visita http://127.0.0.1:5000/admin/
 ## 📝 8. Pruebas en postman del backend para añadir productos como administrador
 http://localhost:5000/admin/products/add
 
+## 📝 9. Accede al login como administrador del frontend para añadir, editar o eliminar productos de la web
+http://localhost:3005/login
+
 ## 📫 Contacto
 ## Email: jonaybolanosmolina@gmail.com
 ## <a href="https://www.linkedin.com/in/jonay-bolanos-molina/" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" alt="https://www.linkedin.com/in/jonay-bolanos-molina/" height="30" width="40" /></a> LinkedIn: www.linkedin.com/in/jonay-bolanos-molina
