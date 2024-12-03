@@ -27,7 +27,7 @@ function Home() {
       <section className="row tarjetas-container">
         {Array.isArray(store.products) && store.products.length > 0 ? (
           store.products.map((product) => (
-            <div key={product.id} className="col-12 col-sm-6 col-md-6 col-lg-4 mb-4 d-flex justify-content-center">
+            <div key={product.id} className="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 mb-4 d-flex justify-content-center">
               <CardProductos
                 id={product.id}
                 name={product.name || "Unknown Name"}
