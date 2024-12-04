@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import "../style/reservation-page.css";
 import Swal from 'sweetalert2';
-import { ClipLoader } from 'react-spinners'; // Asegúrate de que esta importación sea correcta
+import { ClipLoader } from 'react-spinners';
 
 const ReservationPage = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const ReservationPage = () => {
   const [message, setMessage] = useState('');
   const [photos, setPhotos] = useState([]);
   const [previews, setPreviews] = useState([]);
-  const [loading, setLoading] = useState(false); // Estado de carga
+  const [loading, setLoading] = useState(false);
 
   const handleImageChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -75,7 +75,7 @@ const ReservationPage = () => {
       formData.append(`photos_${index}`, photo);
     });
 
-    setLoading(true); // Mostrar el indicador de carga
+    setLoading(true);
 
     try {
       const response = await fetch('http://localhost:5000/api/reservation', {
@@ -89,7 +89,7 @@ const ReservationPage = () => {
           title: '¡Reserva realizada con éxito!',
           text: 'Tu reserva ha sido creada correctamente.',
         });
-        navigate("/");  // Redirigir a la página principal
+        navigate("/");
       } else {
         const errorData = await response.json();
         Swal.fire({
@@ -106,92 +106,95 @@ const ReservationPage = () => {
         text: 'Hubo un error al procesar la reserva. Verifica tu conexión e inténtalo nuevamente.',
       });
     } finally {
-      setLoading(false); // Ocultar el indicador de carga
+      setLoading(false);
     }
   };
 
   return (
     <div className="reservation-page__container container">
-      <h1 className="reservation-page__header">Reservar: {name}</h1>
+      <h1 className="reservation-page__header text-center">Reservar: {name}</h1>
       <form className="reservation-page__form" onSubmit={handleSubmit}>
-        <div className="reservation-page__form-group">
-          <label className="reservation-page__label">Nombre:</label>
-          <input 
-            type="text" 
-            className="reservation-page__input" 
-            value={productName} 
-            onChange={(e) => setProductName(e.target.value)} 
-            placeholder="Escriba su nombre"
-            required 
-          />
-        </div>
-        <div className="reservation-page__form-group">
-          <label className="reservation-page__label">Telefono:</label>
-          <input 
-            type="tel" 
-            className="reservation-page__input" 
-            value={telefono} 
-            onChange={(e) => setTelefono(e.target.value)} 
-            placeholder="1234567890"
-            required 
-          />
-        </div>
-        <div className="reservation-page__form-group">
-          <label className="reservation-page__label">Email:</label>
-          <input 
-            type="email" 
-            className="reservation-page__input" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            placeholder="email@email.com"
-            required 
-          />
-        </div>
-        <div className="reservation-page__form-group">
-          <label className="reservation-page__label">Mensaje:</label>
-          <textarea 
-            className="reservation-page__textarea" 
-            value={message} 
-            onChange={(e) => setMessage(e.target.value)} 
-            placeholder="Texto"
-            required 
-          />
-        </div>
-        <div className="reservation-page__form-group">
-          <label className="reservation-page__label">Subir fotos (máximo 3):</label>
-          <input 
-            type="file" 
-            className="reservation-page__file-input" 
-            onChange={handleImageChange} 
-            accept="image/*" 
-            multiple 
-          />
-          <div className="reservation-page__image-previews">
-            {previews.map((preview, index) => (
-              <div key={index} className="reservation-page__image-preview">
-                <img src={preview} alt={`Previsualización ${index}`} width="200" />
-                <button
-                  type="button"
-                  className="reservation-page__remove-image"
-                  onClick={() => handleRemoveImage(index)}
-                >
-                  Eliminar
-                </button>
-              </div>
-            ))}
+        <div className="row">
+          <div className="col-md-6 mb-3">
+            <label className="reservation-page__label">Nombre:</label>
+            <input 
+              type="text" 
+              className="reservation-page__input form-control" 
+              value={productName} 
+              onChange={(e) => setProductName(e.target.value)} 
+              placeholder="Escriba su nombre"
+              required 
+            />
+          </div>
+          <div className="col-md-6 mb-3">
+            <label className="reservation-page__label">Teléfono:</label>
+            <input 
+              type="tel" 
+              className="reservation-page__input form-control" 
+              value={telefono} 
+              onChange={(e) => setTelefono(e.target.value)} 
+              placeholder="1234567890"
+              required 
+            />
+          </div>
+          <div className="col-sm-12 col-md-6 col-lg-6 col-xl-12 mb-4">
+            <label className="reservation-page__label">Email:</label>
+            <input 
+              type="email" 
+              className="reservation-page__input form-control" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              placeholder="email@email.com"
+              required 
+            />
+          </div>
+          <div className="col-sm-12 col-md-6 col-lg-6 col-xl-12 mb-4">
+            <label className="reservation-page__label">Mensaje:</label>
+            <textarea 
+              className="reservation-page__textarea form-control" 
+              value={message} 
+              onChange={(e) => setMessage(e.target.value)} 
+              placeholder="Texto"
+              required 
+            />
+          </div>
+          <div className="col-12 mb-4">
+            <label className="reservation-page__label">Subir fotos (máximo 3):</label>
+            <input 
+              type="file" 
+              className="reservation-page__file-input form-control" 
+              onChange={handleImageChange} 
+              accept="image/*" 
+              multiple 
+            />
+            <div className="d-flex flex-wrap mt-2">
+              {previews.map((preview, index) => (
+                <div key={index} className="reservation-page__image-preview me-2">
+                  <img src={preview} alt={`Previsualización ${index}`} width="100" />
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm mt-2"
+                    onClick={() => handleRemoveImage(index)}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Mostrar el spinner en lugar del botón de reserva */}
         {loading ? (
-          <div className="reservation-page__loading">
+          <div className="text-center">
             <ClipLoader color="#007bff" loading={loading} size={50} />
             <p>Cargando...</p>
           </div>
         ) : (
-          <button type="submit" className="reservation-page__button">
-            Reservar
-          </button>
+          <div className="text-center">
+            <button type="submit" className="btn btn-primary">
+              Reservar
+            </button>
+          </div>
         )}
       </form>
     </div>
