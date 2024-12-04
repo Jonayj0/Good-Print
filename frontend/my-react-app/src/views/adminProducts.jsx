@@ -18,9 +18,10 @@ function AdminProducts() {
     return (
         <div className="admin-products-container container">
             <h1 className="titulo-admin-products text-center mb-3">Administrar Productos</h1>
-            <section className="card-producto container mb-5 d-flex justify-content-evenly">
+            <section className="row card-producto container mb-5 d-flex justify-content-evenly">
                 {Array.isArray(store.products) && store.products.length > 0 ? (
                     store.products.map(product => (
+                        <div key={product.id} className="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 mb-4 d-flex justify-content-center">
                         <CardProductsAdmin
                             key={product.id}
                             id={product.id}
@@ -29,6 +30,7 @@ function AdminProducts() {
                             price={product.price || 0}
                             image_url={product.image_url || 'default-image-url.jpg'}
                         />
+                        </div>
                     ))
                 ) : (
                     <p>No products available</p>
