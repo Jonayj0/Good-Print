@@ -2,6 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { Context } from "../store/AppContext"; 
 import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import "../style/editProduct.css";
 
 function EditProduct() {
     const { actions, store } = useContext(Context);

@@ -80,12 +80,12 @@ function Navbar() {
                             </li>
                             {/* Mostrar el botón de logout solo si hay token y la ruta es /admin/products */}
                             {token && location.pathname === '/admin/products' && (
-                                <li>
+                                <li className="nav-item mb-2 mb-lg-0">
                                     <Logout />
                                 </li>
                             )}
                             {token && location.pathname.includes('/admin') && (
-                                <li>
+                                <li className="nav-item mb-2 mb-lg-0">
                                         <Link to="/admin/products" className="btn btn-outline-success me-2 admin-btn">
                                             Admin
                                         </Link>
