@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Context } from "../store/AppContext"; 
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
+import "../style/addProduct.css";
 
 function AddProduct() {
     const { actions } = useContext(Context);
