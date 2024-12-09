@@ -320,3 +320,28 @@ def edit_admin_product(current_user, product_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Failed to update product", "details": str(e)}), 500
+
+
+# Ruta protegida para eliminar un producto (solo para admin)
+@main.route('/admin/products/delete/<int:product_id>', methods=['DELETE'])
+@token_required
+def delete_admin_product(current_user, product_id):
+    try:
+        # Verificar si el usuario actual es un administrador
+        if not current_user.is_admin:
+            return jsonify({"error": "Unauthorized access, admin only"}), 403
+
+        # Buscar el producto en la base de datos
+        product = Product.query.get(product_id)
+        if not product:
+            return jsonify({"error": "Product not found"}), 404
+        
+        # Eliminar el producto de la base de datos
+        db.session.delete(product)
+        db.session.commit()
+
+        return jsonify({"message": "Product deleted successfully!"}), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to delete product", "details": str(e)}), 500
