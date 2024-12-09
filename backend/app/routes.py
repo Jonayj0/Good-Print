@@ -286,7 +286,37 @@ def add_admin_product(current_user):
         return jsonify({"error": "Failed to add product", "details": str(e)}), 500
 
 # Al final del archivo, imprime las rutas disponibles
-@main.route('/test', methods=['GET'])
-def test():
-    return jsonify({"message": "Test route is working!"}), 200
+# @main.route('/test', methods=['GET'])
+# def test():
+#     return jsonify({"message": "Test route is working!"}), 200
 
+# Ruta protegida para editar un producto (solo para admin)
+@main.route('/admin/products/edit/<int:product_id>', methods=['PUT'])
+@token_required
+def edit_admin_product(current_user, product_id):
+    # Obtener los datos enviados por el cliente
+    data = request.get_json()
+    
+    try:
+        # Buscar el producto en la base de datos
+        product = Product.query.get(product_id)
+        if not product:
+            return jsonify({"error": "Product not found"}), 404
+        
+        # Validar campos requeridos y actualizar solo los campos enviados
+        if 'name' in data:
+            product.name = data['name']
+        if 'description' in data:
+            product.description = data['description']
+        if 'price' in data:
+            product.price = data['price']
+        if 'image_url' in data:
+            product.image_url = data['image_url']
+        
+        # Guardar los cambios en la base de datos
+        db.session.commit()
+        return jsonify({"message": "Product updated successfully!"}), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to update product", "details": str(e)}), 500
