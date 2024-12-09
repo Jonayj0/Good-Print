@@ -143,7 +143,44 @@ const getState = ({ getStore, getActions, setStore }) => {
                 // Finalmente, agrega el producto
                 productData.image_url = finalImageUrl; // Usa la URL final de la imagen (de Cloudinary o directa)
                 await getActions().addProduct(productData); // Llama a la acción original para añadir el producto
-            },            
+            },
+            updateProduct: async (productId, updatedData) => {
+                try {
+                    const url = `${import.meta.env.VITE_API_BASE_URL}/admin/products/edit/${productId}`; // Ruta para editar el producto
+                    const token = localStorage.getItem('token');
+            
+                    // Verifica si hay un token antes de proceder
+                    if (!token) {
+                        console.error("No token found!");
+                        return;
+                    }
+            
+                    const response = await fetch(url, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`, // Incluye el token en la solicitud
+                        },
+                        body: JSON.stringify(updatedData), // Envía los datos actualizados del producto
+                    });
+            
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || "Failed to update product");
+                    }
+            
+                    const result = await response.json();
+                    console.log(result.message); // Mensaje de éxito
+            
+                    // Refrescar la lista de productos después de editar uno
+                    await getActions().getProducts(true); // Llama a getProducts para obtener la lista actualizada
+            
+                    return { success: true, message: result.message }; // Devuelve el resultado para manejarlo en el componente
+                } catch (error) {
+                    console.error("Error updating product:", error);
+                    return { success: false, message: error.message }; // Maneja el error
+                }
+            },                        
         },
     };
 };
