@@ -180,7 +180,50 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error updating product:", error);
                     return { success: false, message: error.message }; // Maneja el error
                 }
-            },                        
+            },
+            deleteProduct: async (productId) => {
+                try {
+                    // Definir la URL para la eliminación del producto
+                    const url = `${import.meta.env.VITE_API_BASE_URL}/admin/products/delete/${productId}`;
+                    
+                    // Obtener el token de autenticación
+                    const token = localStorage.getItem('token');
+                    
+                    // Verifica si el token está presente
+                    if (!token) {
+                        console.error("No token found!");
+                        return;
+                    }
+                    
+                    // Realizar la solicitud DELETE
+                    const response = await fetch(url, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`,  // Incluir el token en la solicitud
+                        },
+                    });
+            
+                    // Verificar si la respuesta es exitosa
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || "Failed to delete product");
+                    }
+            
+                    // Obtener la respuesta del backend
+                    const result = await response.json();
+                    console.log(result.message); // Mensaje de éxito
+                    
+                    // Refrescar la lista de productos después de eliminar uno
+                    await getActions().getProducts(true);  // Recargar los productos
+            
+                    return { success: true, message: result.message }; // Devuelve un mensaje de éxito
+            
+                } catch (error) {
+                    console.error("Error deleting product:", error);
+                    return { success: false, message: error.message }; // Manejar el error
+                }
+            },                                    
         },
     };
 };
