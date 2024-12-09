@@ -311,7 +311,8 @@ def edit_admin_product(current_user, product_id):
         if 'price' in data:
             product.price = data['price']
         if 'image_url' in data:
-            product.image_url = data['image_url']
+            product.image_url = data['image_url'] if data['image_url'] else None
+
         
         # Guardar los cambios en la base de datos
         db.session.commit()
