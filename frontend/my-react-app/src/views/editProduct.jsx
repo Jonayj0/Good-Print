@@ -41,19 +41,43 @@ function EditProduct() {
     };
 
     const resetImageFile = () => {
-        setImageFile(null);
-        document.getElementById("imageFileInput").value = "";
+        setImageFile(null); // Limpia el archivo seleccionado
+        setImageUrl(""); // Limpia la URL para asegurarse de que no se envíe nada
+        document.getElementById("imageFileInput").value = ""; // Limpia el input de archivo
     };
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const productData = {
+        let productData = {
             name,
             description,
             price,
-            image_url: imageUrl,
+            image_url: imageUrl || "", // Si imageUrl es vacía o null, se envía como cadena vacía
         };
+        // Si se seleccionó un archivo, subimos la imagen y obtenemos la URL
+    if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        formData.append("upload_preset", "preset_good_print");
+
+        try {
+            const response = await fetch("https://api.cloudinary.com/v1_1/dtxkcfugs/image/upload", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                productData.image_url = data.secure_url; // Asigna la URL de Cloudinary
+            } else {
+                throw new Error("Error al subir la imagen.");
+            }
+        } catch (error) {
+            console.error("Error al subir la imagen:", error);
+        }
+    }
 
         try {
             await actions.updateProduct(id, productData, imageFile); // Usa la acción de editar
