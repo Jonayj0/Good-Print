@@ -5,10 +5,9 @@ import "../style/card-products-admin.css";
 function CardProductsAdmin({ id, name, description, price, image_url }) {
     return (
         <div className="tarjeta-productos-admin" style={{ width: "18rem" }}>
-            <button className="admin-edit btn btn-success">
-                <i className="fa-regular fa-pen-to-square">
-                    </i>
-            </button>
+            <Link to={`/admin/products/edit/${id}`} className="admin-edit btn btn-success">
+                <i className="fa-regular fa-pen-to-square"></i>
+            </Link>
             <button className="admin-delete btn btn-danger ms-1">
                 <i className="fa-solid fa-trash" />
                     

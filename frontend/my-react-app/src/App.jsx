@@ -10,6 +10,7 @@ import LoginView from './views/loginView';
 import AdminProducts from './views/adminProducts';
 import ProtectedRoute from './components/ProtectedRoute';
 import AddProduct from './views/addProduct';
+import EditProduct from './views/editProduct';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/login" element={<LoginView />} />
           <Route path="/admin/products" element={<ProtectedRoute element={AdminProducts} />} />
           <Route path="/admin/products/add" element={<ProtectedRoute element={AddProduct} />} />
+          <Route path="/admin/products/edit/:id" element={<ProtectedRoute element={EditProduct} />} />
         </Routes>
         <Footer />
       </div>
