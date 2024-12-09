@@ -8,3 +8,9 @@
     transition: all 0.3s ease;
     box-sizing: content-box;
 }
+.detalles-btn {
+    width: 48%;
+}
+.reservar-btn {
+    width: 48%;
+}

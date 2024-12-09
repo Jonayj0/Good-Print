@@ -67,7 +67,10 @@
   margin-top: auto;
 }
 
-.btn {
+.detalles-btn {
+  width: 48%;
+}
+.reservar-btn {
   width: 48%;
 }
 

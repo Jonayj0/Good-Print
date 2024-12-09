@@ -84,13 +84,11 @@ function Navbar() {
                                     <Logout />
                                 </li>
                             )}
-                            {token && location.pathname === '/admin/products/add' && (
+                            {token && location.pathname.includes('/admin') && (
                                 <li>
-                                    <button className="btn btn-outline-success me-2" type="submit">
-                                        <Link to="admin/products" className="text-black">
-                                        Admin
+                                        <Link to="/admin/products" className="btn btn-outline-success me-2 admin-btn">
+                                            Admin
                                         </Link>
-                                    </button>
                                 </li>
                             )}
                         </ul>

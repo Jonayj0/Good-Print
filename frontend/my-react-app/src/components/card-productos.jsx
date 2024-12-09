@@ -28,12 +28,12 @@ function CardProductos({ id, name, description, price, image_url }) {
           {price} <strong>€</strong>
         </p>
         <div className="card-buttons">
-          <Link to="/product-details" className="btn btn-primary">
+          <Link to="/product-details" className="btn btn-primary detalles-btn">
             Detalles
           </Link>
           <Link
             to={`/reservar/${id}/${encodeURIComponent(name)}`}
-            className="btn btn-success"
+            className="btn btn-success reservar-btn"
           >
             Reservar
           </Link>
