@@ -39,6 +39,7 @@ def add_product():
     db.session.commit()
     return jsonify({"message": "Product added successfully!"}), 201
 
+#-----------------------------------------VER TODOS LOS PRODUCTOS--------------------------------///////
 @main.route('/products', methods=['GET'])
 def get_products():
     products = Product.query.all()
@@ -53,6 +54,24 @@ def get_products():
         for product in products
     ]
     return jsonify(products_list), 200
+
+#-----------------------------------------VER UN PRODUCTO--------------------------------///////
+@main.route('/products/<int:product_id>', methods=['GET'])
+def get_product_by_id(product_id):
+    try:
+        product = Product.query.get(product_id)
+        if not product:
+            return jsonify({"error": "Product not found"}), 404
+        product_data = {
+            "id": product.id,
+            "name": product.name,
+            "description": product.description,
+            "price": product.price,
+            "image_url": product.image_url
+        }
+        return jsonify(product_data), 200
+    except Exception as e:
+        return jsonify({"error": "Failed to fetch product", "details": str(e)}), 500
 
 #-------------------------------------------------RESERVAS----------------------------------
 @main.route('/api/reservation', methods=['POST'])
