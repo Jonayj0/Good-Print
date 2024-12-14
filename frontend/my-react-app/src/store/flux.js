@@ -223,7 +223,30 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error deleting product:", error);
                     return { success: false, message: error.message }; // Manejar el error
                 }
-            },                                    
+            },
+            getProductById: async (productId) => {
+                try {
+                    const url = `${import.meta.env.VITE_API_BASE_URL}/products/${productId}`; // Construye la URL
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+            
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || "Failed to fetch product");
+                    }
+            
+                    const product = await response.json(); // Obtiene los datos del producto
+                    console.log("Product fetched successfully:", product);
+                    return { success: true, product }; // Devuelve el producto para usarlo en el componente
+                } catch (error) {
+                    console.error("Error fetching product:", error.message);
+                    return { success: false, message: error.message }; // Maneja el error
+                }
+            },                                                
         },
     };
 };
