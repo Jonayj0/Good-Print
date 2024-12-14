@@ -1,14 +1,20 @@
-.container {
+/* Contenedor principal específico para ProductDetails */
+.product-details-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-}
-
-.product-details {
   text-align: center;
 }
 
-.product-card {
+/* Título de la página de detalles */
+.product-details-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Estilo de la tarjeta de producto */
+.product-details-card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -19,24 +25,35 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.product-image {
+/* Imagen del producto */
+.product-details-image {
   max-width: 300px;
   border-radius: 8px;
   margin-bottom: 20px;
 }
 
-.product-info {
+/* Información del producto */
+.product-details-info {
   text-align: left;
+  width: 100%;
+  max-width: 600px;
 }
 
-.product-info h2 {
+.product-details-name {
   margin: 0;
   font-size: 24px;
   color: #333;
 }
 
-.product-info p {
+.product-details-description {
   margin: 5px 0;
   font-size: 18px;
   color: #555;
 }
+
+.product-details-price {
+  margin: 5px 0;
+  font-size: 18px;
+  color: #555;
+}
+

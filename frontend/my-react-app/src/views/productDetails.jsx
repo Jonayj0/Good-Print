@@ -25,27 +25,31 @@ function ProductDetails() {
     }, [productId, actions]);
 
     if (loading) {
-        return <div className="container">Cargando detalles del producto...</div>;
+        return <div className="product-details-container">Cargando detalles del producto...</div>;
     }
 
     if (error) {
-        return <div className="container">Error: {error}</div>;
+        return <div className="product-details-container">Error: {error}</div>;
     }
 
     return (
-        <div className="container product-details">
-            <h1>Detalles del Producto</h1>
+        <div className="product-details-container">
+            <h1 className="product-details-title">Detalles del Producto</h1>
             {product && (
-                <div className="product-card">
+                <div className="product-details-card">
                     <img
                         src={product.image_url}
                         alt={product.name}
-                        className="product-image"
+                        className="product-details-image"
                     />
-                    <div className="product-info">
-                        <h2>{product.name}</h2>
-                        <p><strong>Descripción:</strong> {product.description}</p>
-                        <p><strong>Precio:</strong> {product.price} €</p>
+                    <div className="product-details-info">
+                        <h2 className="product-details-name">{product.name}</h2>
+                        <p className="product-details-description">
+                            <strong>Descripción:</strong> {product.description}
+                        </p>
+                        <p className="product-details-price">
+                            <strong>Precio:</strong> {product.price} €
+                        </p>
                     </div>
                 </div>
             )}
@@ -54,4 +58,5 @@ function ProductDetails() {
 }
 
 export default ProductDetails;
+
 
