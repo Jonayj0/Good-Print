@@ -28,7 +28,7 @@ function CardProductos({ id, name, description, price, image_url }) {
           {price} <strong>€</strong>
         </p>
         <div className="card-buttons">
-          <Link to="/product-details" className="btn btn-primary detalles-btn">
+          <Link to={`/product-details/${id}`} className="btn btn-primary detalles-btn">
             Detalles
           </Link>
           <Link

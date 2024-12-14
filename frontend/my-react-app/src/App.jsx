@@ -21,7 +21,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/api-view" element={<ApiView />} />
           <Route path="/nosotros" element={<Nosotros />} />
-          <Route path="/product-details" element={<ProductDetails />} />
+          <Route path="/product-details/:productId" element={<ProductDetails />} />
           <Route path="/reservar/:id/:name" element={<ReservationPage />} />
           <Route path="/login" element={<LoginView />} />
           <Route path="/admin/products" element={<ProtectedRoute element={AdminProducts} />} />
