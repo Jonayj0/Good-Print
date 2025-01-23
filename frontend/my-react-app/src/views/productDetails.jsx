@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Context } from "../store/AppContext";
 import "../style/product-details.css";
 
@@ -50,6 +50,12 @@ function ProductDetails() {
                         <p className="product-details-price">
                             <strong>Precio:</strong> {product.price} €
                         </p>
+                        <Link
+                            to={`/reservar/${product.id}/${encodeURIComponent(product.name)}`}
+                            className="btn btn-success reserva-btn-details"
+                        >
+                            Reservar
+                        </Link>
                     </div>
                 </div>
             )}
