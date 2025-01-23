@@ -3,6 +3,9 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 
@@ -23,11 +26,15 @@
   padding: 20px;
   background-color: #fff;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s ease;
+  width: 100%; /* Ocupa el 100% del contenedor por defecto */
+  max-width: 500px; /* Ancho máximo para pantallas grandes */
 }
 
 /* Imagen del producto */
 .product-details-image {
-  max-width: 300px;
+  width: 100%; /* Imagen responsiva que ocupa el ancho del contenedor */
+  max-width: 300px; /* Ancho máximo para pantallas grandes */
   border-radius: 8px;
   margin-bottom: 20px;
 }
@@ -36,24 +43,70 @@
 .product-details-info {
   text-align: left;
   width: 100%;
-  max-width: 600px;
+  max-width: 400px;
 }
 
 .product-details-name {
   margin: 0;
-  font-size: 24px;
+  font-size: 28px;
   color: #333;
 }
 
 .product-details-description {
   margin: 5px 0;
-  font-size: 18px;
-  color: #555;
+  font-size: 16px;
+  color: #000000;
 }
 
 .product-details-price {
   margin: 5px 0;
-  font-size: 18px;
-  color: #555;
+  font-size: 16px;
+  color: #000000;
 }
 
+/* Botón centrado y responsive */
+.reserva-btn-details {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #18ad3b;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  max-width: 200px;
+  width: 100%;
+}
+
+.reserva-btn-details:hover {
+  background-color: #397f49;
+}
+
+/* Diseño responsive */
+@media (min-width: 768px) {
+  .product-details-card {
+    max-width: 700px; /* Ancho mayor para tablets y pantallas medianas */
+  }
+
+  .product-details-name {
+    font-size: 32px; /* Texto más grande para pantallas medianas */
+  }
+
+  .product-details-description, .product-details-price {
+    font-size: 18px; /* Texto más grande para pantallas medianas */
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-details-card {
+    max-width: 900px; /* Ancho mayor para pantallas grandes */
+  }
+
+  .product-details-info {
+    max-width: 600px; /* Más espacio para la información en pantallas grandes */
+  }
+}
