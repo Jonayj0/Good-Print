@@ -1,63 +1,64 @@
-/* Estilo global para centrar el contenedor en la página */
-/* body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    align-content: flex-start;
-    justify-content: center;
-    flex-wrap: wrap;
-  } */
-  
-  .home {
-    position: relative;
-    width: 100%;
-    max-width: 80%; /* Ajusta el tamaño máximo según sea necesario */
-    height: auto;
-    overflow: hidden; /* Asegura que la imagen no desborde el contenedor */
-  }
-  
+.home {
+  position: relative;
+  width: 100%;
+  max-width: 80%; /* Ajusta el tamaño máximo según sea necesario */
+  height: auto;
+  overflow: hidden; /* Asegura que la imagen no desborde el contenedor */
+}
+
+.foto-home {
+  width: 100%;
+  height: 300px; /* Establece una altura fija para hacer la imagen más chata */
+  display: block;
+  object-fit: cover; /* Ajusta cómo se redimensiona la imagen */
+  object-position: center; /* Centra la imagen si es recortada */
+}
+
+.titulo-home {
+  font-size: 10vw; /* Utiliza una unidad relativa para que el texto se escale */
+  font-weight: bold;
+  text-shadow: 3px 3px 1px rgba(0, 0, 0, 0.7); /* Para mejorar la legibilidad del texto */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgb(64, 248, 245);
+  text-align: center;
+  padding: 0 10px; /* Añade padding para evitar que el texto se toque con los bordes en pantallas pequeñas */
+  max-width: 90%; /* Limita el ancho del texto en pantallas pequeñas */
+}
+
+/* Media queries para ajustar el diseño en diferentes tamaños de pantalla */
+
+/* Pequeñas pantallas (teléfonos) */
+@media (max-width: 600px) {
   .foto-home {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
-    
+    height: 200px; /* Reduce la altura de la imagen en pantallas pequeñas */
   }
-  
   .titulo-home {
-    font-size: 10vw; /* Utiliza una unidad relativa para que el texto se escale */
-    font-weight: bold;
-    text-shadow: 3px 3px 1px rgba(0, 0, 0, 0.7); /* Para mejorar la legibilidad del texto */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: rgb(64, 248, 245);
-    text-align: center;
-    padding: 0 10px; /* Añade padding para evitar que el texto se toque con los bordes en pantallas pequeñas */
-    width: 100%;
+    font-size: 8vw; /* Ajusta el tamaño de la fuente para pantallas pequeñas */
+    padding: 0 5px; /* Reduce el padding en pantallas pequeñas */
   }
-  
-  /* Media queries para ajustar el diseño en diferentes tamaños de pantalla */
-  
-  /* Pequeñas pantallas (teléfonos) */
-  @media (max-width: 600px) {
-    .titulo-home {
-      font-size: 8vw; /* Ajusta el tamaño de la fuente para pantallas pequeñas */
-    }
+}
+
+/* Pantallas medianas (tabletas) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .foto-home {
+    height: 250px; /* Ajusta la altura de la imagen en pantallas medianas */
   }
-  
-  /* Pantallas medianas (tabletas) */
-  @media (min-width: 601px) and (max-width: 1024px) {
-    .titulo-home {
-      font-size: 6vw; /* Ajusta el tamaño de la fuente para pantallas medianas */
-    }
+  .titulo-home {
+    font-size: 6vw; /* Ajusta el tamaño de la fuente para pantallas medianas */
   }
-  
-  /* Pantallas grandes (desktops) */
-  @media (min-width: 1025px) {
-    .titulo-home {
-      font-size: 4vw; /* Ajusta el tamaño de la fuente para pantallas grandes */
-    }
+}
+
+/* Pantallas grandes (desktops) */
+@media (min-width: 1025px) {
+  .foto-home {
+    height: 300px; /* Mantén una altura fija para pantallas grandes */
   }
+  .titulo-home {
+    font-size: 4vw; /* Ajusta el tamaño de la fuente para pantallas grandes */
+  }
+}
+
   
