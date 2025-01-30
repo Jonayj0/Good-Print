@@ -12,7 +12,9 @@ function CardProductos({ id, name, description, price, image_url }) {
 
   return (
     <div className="tarjeta-productos">
+      <Link to={`/product-details/${id}`} className="img">
       <img src={image_url} className="card-img-top" alt={name} />
+          </Link>
       <div className="card-body">
         <h5 className="card-title">{name}</h5>
         <p className={`card-text ${isExpanded ? "expanded" : ""}`}>
