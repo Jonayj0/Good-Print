@@ -1,6 +1,16 @@
-### :rocket: Plantilla para Proyectos React con Flask y SQL Alchemy, Made by Jonayj0
+# Good Print ![Paleta de Colores](https://img.icons8.com/color/48/000000/paint-palette.png)
 
-Este proyecto es una plantilla para desarrollar aplicaciones web utilizando React en el front-end, Flask en el back-end y SQL Alchemy como ORM para la base de datos.
+Good Print es una plataforma innovadora para la **reserva de artículos personalizables**. Nuestra web te permite diseñar y reservar productos únicos, adaptados a tu estilo y necesidades, con una experiencia de usuario intuitiva y moderna.
+
+## Características Destacadas
+
+- **Personalización:** Envíanos tu idea y ajustaremos el diseño a tu gusto.
+- **Reservas seguras y rápidas:** Gestiona tus pedidos de forma sencilla.
+- **Interfaz amigable:** Navegación intuitiva para una experiencia óptima.
+- **Variedad de productos:** Encuentra el artículo perfecto para cada ocasión.
+
+¡Exprésate y crea tus propios diseños con Good Print!
+
 
 ## :computer: Estructura del Proyecto
 
