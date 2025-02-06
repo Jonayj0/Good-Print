@@ -18,9 +18,10 @@ class Product(db.Model):
     description = db.Column(db.Text, nullable=False)
     price = db.Column(db.Float, nullable=False)
     image_url = db.Column(db.String(900), nullable=True)
+    category = db.Column(db.String(80), nullable=True)
 
     def __repr__(self):
-        return f"Product('{self.name}', '{self.price}')"
+        return f"Product('{self.name}', '{self.price}', '{self.category}')"
 
 
 # Modelo de Reserva
