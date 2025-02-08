@@ -11,7 +11,7 @@ function Navbar() {
 
     return (
         <>
-            <nav className="navbar container navbar-expand-lg">
+            <nav className="navbar container-fluid navbar-expand-lg">
                 <div className="container-fluid">
                     <Link to="/">
                     <img className="logo-img" src={logo} alt="logo" style={{ width: "100px", height: "auto" }}/>

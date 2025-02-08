@@ -3,7 +3,7 @@ import "../style/footer.css";
 
 function Footer() {
     return (
-        <div className="footer container">
+        <div className="footer container-fluid">
         <ul className="nav justify-content-center">
             <li className="nav-item">
             <Link className="nav-link home" aria-current="page" to="/">

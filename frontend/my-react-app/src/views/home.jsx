@@ -15,7 +15,7 @@ function Home() {
   }, [store.products.length, actions]);
 
   return (
-    <div className="container">
+    <div className="container-fluid">
       <div className="home container text-center">
         <h1 className="titulo-home">Bienvenid@ a Good Print</h1>
         <img
@@ -27,7 +27,7 @@ function Home() {
       <section className="row tarjetas-container">
         {Array.isArray(store.products) && store.products.length > 0 ? (
           store.products.map((product) => (
-            <div key={product.id} className="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 mb-4 d-flex justify-content-center">
+            <div key={product.id} className="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-3 mb-4 d-flex justify-content-center">
               <CardProductos
                 id={product.id}
                 name={product.name || "Unknown Name"}
