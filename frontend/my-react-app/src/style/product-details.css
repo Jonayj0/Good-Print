@@ -69,11 +69,17 @@
   display: block;
   margin: 20px auto 0;
   padding: 10px 20px;
-  font-size: 16px;
-  color: #fff;
-  background-color: #18ad3b;
+  font-size: 1.5em;
+  font-weight: bold;
+  box-shadow: rgba(0, 0, 0, 0.5) 2px 2px 10px;
+  color: #ffffff;
+  background-color: #af08f1;
   border: none;
   border-radius: 5px;
+  border-width: 2px;
+  border-style: solid;
+  border-image: initial;
+  border-color: #8808d2;
   text-decoration: none;
   text-align: center;
   cursor: pointer;
@@ -83,7 +89,7 @@
 }
 
 .reserva-btn-details:hover {
-  background-color: #397f49;
+  background-color: #7705b9;
 }
 
 /* Diseño responsive */
