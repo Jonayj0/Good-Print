@@ -49,7 +49,8 @@ def get_products():
             "name": product.name,
             "description": product.description,
             "price": product.price,
-            "image_url": product.image_url
+            "image_url": product.image_url,
+            "category": product.category
         }
         for product in products
     ]
@@ -67,7 +68,9 @@ def get_product_by_id(product_id):
             "name": product.name,
             "description": product.description,
             "price": product.price,
-            "image_url": product.image_url
+            "image_url": product.image_url,
+            "category": product.category
+
         }
         return jsonify(product_data), 200
     except Exception as e:
@@ -284,7 +287,7 @@ def add_admin_product(current_user):
     data = request.get_json()
     
     # Validar campos requeridos
-    if not all(key in data for key in ['name', 'description', 'price']):
+    if not all(key in data for key in ['name', 'description', 'price', 'category']):
         return jsonify({"error": "Missing required product fields"}), 400
     
     try:
@@ -292,7 +295,8 @@ def add_admin_product(current_user):
             name=data['name'],
             description=data['description'],
             price=data['price'],
-            image_url=data.get('image_url', None)
+            image_url=data.get('image_url', None),
+            category=data.get['category']
         )
         
         db.session.add(new_product)
@@ -331,7 +335,10 @@ def edit_admin_product(current_user, product_id):
             product.price = data['price']
         if 'image_url' in data:
             product.image_url = data['image_url'] if data['image_url'] else None
-
+        # Mantiene la categoría si no se envía
+        product.category = data.get('category', product.category)
+        #if 'category' in data:
+            #product.category = data['category']
         
         # Guardar los cambios en la base de datos
         db.session.commit()
