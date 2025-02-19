@@ -15,6 +15,7 @@ function EditProduct() {
     const [price, setPrice] = useState("");
     const [imageUrl, setImageUrl] = useState(""); // URL directa de imagen
     const [imageFile, setImageFile] = useState(null); // Archivo desde equipo
+    const [category, setCategory] = useState('');
 
     // Cargar los datos del producto al montar el componente
     useEffect(() => {
@@ -25,6 +26,7 @@ function EditProduct() {
                 setDescription(product.description);
                 setPrice(product.price);
                 setImageUrl(product.image_url);
+                setCategory(product.category);
             } else {
                 // Si no está en el store, llama a la API para obtenerlo
                 await actions.getProducts(true); // Refresca productos si es necesario
@@ -54,6 +56,7 @@ function EditProduct() {
             name,
             description,
             price,
+            category,
             image_url: imageUrl || "", // Si imageUrl es vacía o null, se envía como cadena vacía
         };
         // Si se seleccionó un archivo, subimos la imagen y obtenemos la URL
@@ -115,6 +118,14 @@ function EditProduct() {
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         required
+                    />
+                    <textarea 
+                        type="text" 
+                        className="form-control mb-3" 
+                        placeholder="Categoria" 
+                        value={category} 
+                        onChange={(e) => setCategory(e.target.value)} 
+                        required 
                     />
                     <input
                         type="number"
