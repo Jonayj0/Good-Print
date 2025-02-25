@@ -1,0 +1,40 @@
+.split-text {
+        display: inline-block;
+        white-space: pre-wrap; /* Mantiene espacios */
+        font-size: clamp(24px, 6vw, 80px); /* Tamaño responsivo mejorado */
+        font-weight: bold; /* Asegura que se vea como un título */
+        text-align: center;
+        line-height: 1.2;
+    }
+    
+    .char {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.3s, transform 0.3s;
+    }
+    
+    .char.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    /* Opcional: Ajustes específicos para tamaños de pantalla */
+    @media (max-width: 1024px) { 
+        .split-text {
+        font-size: clamp(26px, 5vw, 70px); 
+        }
+    }
+    
+    @media (max-width: 768px) { 
+        .split-text {
+        font-size: clamp(24px, 5.5vw, 60px); 
+        }
+    }
+    
+    @media (max-width: 480px) { 
+        .split-text {
+        font-size: clamp(22px, 4.5vw, 50px); 
+        }
+    }
+    
