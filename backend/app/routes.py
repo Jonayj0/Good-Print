@@ -256,7 +256,8 @@ def get_admin_products(current_user):
             "name": product.name,
             "description": product.description,
             "price": product.price,
-            "image_url": product.image_url
+            "image_url": product.image_url,
+            "category": product.category
         }
         for product in products
     ]
@@ -317,6 +318,11 @@ def add_admin_product(current_user):
 @main.route('/admin/products/edit/<int:product_id>', methods=['PUT'])
 @token_required
 def edit_admin_product(current_user, product_id):
+    
+    # Verificar si el usuario es administrador
+    if not current_user.is_admin:
+        return jsonify({"error": "Unauthorized"}), 403
+    
     # Obtener los datos enviados por el cliente
     data = request.get_json()
     
