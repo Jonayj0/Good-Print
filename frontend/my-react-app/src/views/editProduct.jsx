@@ -15,7 +15,7 @@ function EditProduct() {
     const [price, setPrice] = useState("");
     const [imageUrl, setImageUrl] = useState(""); // URL directa de imagen
     const [imageFile, setImageFile] = useState(null); // Archivo desde equipo
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState("");
 
     // Cargar los datos del producto al montar el componente
     useEffect(() => {
@@ -26,7 +26,7 @@ function EditProduct() {
                 setDescription(product.description);
                 setPrice(product.price);
                 setImageUrl(product.image_url);
-                setCategory(product.category);
+                setCategory(product.category || "Añadir categoria");
             } else {
                 // Si no está en el store, llama a la API para obtenerlo
                 await actions.getProducts(true); // Refresca productos si es necesario
