@@ -52,7 +52,7 @@ function CardProductsAdmin({ id, name, description, price, image_url }) {
                     {price}
                     <strong>€</strong>
                 </p>
-                <Link to="/product-details" className="btn btn-primary mb-1 detalles-btn">
+                <Link to={`/product-details/${id}`} className="btn btn-primary mb-1 detalles-btn">
                     Ver Detalles
                 </Link>
                 <Link to={`/reservar/${id}/${encodeURIComponent(name)}`} className="btn btn-success reservar-btn">
