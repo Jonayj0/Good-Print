@@ -7,16 +7,17 @@ import Logout from "../components/Logout";
 function Navbar() {
 
     const location = useLocation(); // Para obtener la ruta actual
+    const isAdminRoute = location.pathname.startsWith("/admin"); // Verifica si la ruta es /admin
     const token = localStorage.getItem('token'); // Verifica si hay un token
 
     return (
         <>
             <nav className="navbar container-fluid navbar-expand-lg">
                 <div className="container-fluid">
-                    <Link to="/">
-                    <img className="logo-img" src={logo} alt="logo" style={{ width: "100px", height: "auto" }}/>
+                    <Link to={isAdminRoute ? "/admin/products" : "/"}>
+                        <img className="logo-img" src={logo} alt="logo" style={{ width: "100px", height: "auto" }}/>
                     </Link>
-                    <Link className="navbar-brand" to="/">
+                    <Link className="navbar-brand" to={isAdminRoute ? "/admin/products" : "/"}>
                         Good Print
                     </Link>
                     <button
@@ -33,8 +34,11 @@ function Navbar() {
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                             <li className="nav-item">
-                                <Link className="nav-link active" aria-current="page" to="/">
-                                    Home
+                                <Link 
+                                    className={`nav-link ${location.pathname === "/" && !location.pathname.includes('/admin') ? "active" : ""}`} 
+                                    to={location.pathname.includes('/admin') ? "/admin/products" : "/"}
+                                >
+                                    {location.pathname.includes('/admin') ? "Admin" : "Home"}
                                 </Link>
                             </li>
                             {/* <li className="nav-item">
@@ -43,11 +47,11 @@ function Navbar() {
                                 </Link>
                             </li> */}
                             <li className="nav-item">
-                            <Link className="nav-link active" to="/nosotros">
+                            <Link className="nav-link" to="/nosotros">
                                     Nosotros
                                 </Link>
                             </li>
-                            <li className="nav-item dropdown">
+                            <li className="nav-item dropdown me-2">
                                 <a
                                     className="nav-link dropdown-toggle"
                                     href="#"
@@ -84,13 +88,13 @@ function Navbar() {
                                     <Logout />
                                 </li>
                             )}
-                            {token && location.pathname.includes('/admin') && (
+                            {/* {token && location.pathname.includes('/admin') && (
                                 <li className="nav-item mb-2 mb-lg-0">
                                         <Link to="/admin/products" className="btn btn-outline-success me-2 admin-btn">
                                             Admin
                                         </Link>
                                 </li>
-                            )}
+                            )} */}
                         </ul>
                         <form className="form d-flex" role="search">
                             <input
