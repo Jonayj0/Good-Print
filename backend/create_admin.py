@@ -1,27 +1,30 @@
+import os
+from dotenv import load_dotenv
 from app import db, create_app
 from app.models import User
 from werkzeug.security import generate_password_hash
 
+# Cargar variables de entorno desde .env
+load_dotenv()
+
 app = create_app()
 
-# Crear los usuarios administradores
 with app.app_context():
-    # Lista de administradores a crear
-    admins = [
-        {'username': 'Jonay', 'email': 'elmundoenbandeja@gmail.com', 'password': 'GoodPrint123'},
-        {'username': 'Admin2', 'email': 'admin2@example.com', 'password': 'AdminPassword2'},
-    ]
-    
-    for admin in admins:
+    # Obtener credenciales desde variables de entorno
+    username = os.getenv("ADMIN_USERNAME")
+    email = os.getenv("ADMIN_EMAIL")
+    password = os.getenv("ADMIN_PASSWORD")
+
+    if username and email and password:
         new_admin = User(
-            username=admin['username'],
-            email=admin['email'],
-            password=generate_password_hash(admin['password'], method='scrypt'),  # Usar scrypt para hashear
+            username=username,
+            email=email,
+            password=generate_password_hash(password, method='scrypt'),
             is_admin=True
         )
-
-        # Añadir y guardar en la base de datos
         db.session.add(new_admin)
+        db.session.commit()
+        print("Administrador creado exitosamente.")
+    else:
+        print("Error: Faltan variables de entorno para el administrador.")
 
-    db.session.commit()  # Hacer un solo commit después de añadir todos
-    print("Administradores creados exitosamente.")
