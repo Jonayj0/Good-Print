@@ -378,3 +378,34 @@ def delete_admin_product(current_user, product_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Failed to delete product", "details": str(e)}), 500
+
+# Ruta protegida para obtener todas las reservas (solo para admin)
+@main.route('/admin/reservations', methods=['GET'])
+@token_required
+
+def get_admin_reservations(current_user):
+    try:
+        # Verificar si el usuario actual es un administrador
+        if not current_user.is_admin:
+            return jsonify({"error": "Unauthorized access, admin only"}), 403
+
+        # Obtener todas las reservas de la base de datos
+        reservations = Reserva.query.all()
+        reservations_list = [
+            {
+                "id": reserva.id,
+                "nombre_cliente": reserva.nombre_cliente,
+                "telefono_cliente": reserva.telefono_cliente,
+                "email_cliente": reserva.email_cliente,
+                "mensaje": reserva.mensaje,
+                "fotos": reserva.fotos,
+                "fecha_reserva": reserva.fecha_reserva,
+                "producto": reserva.producto.name
+            }
+            for reserva in reservations
+        ]
+
+        return jsonify(reservations_list), 200
+    
+    except Exception as e:
+        return jsonify({"error": "Failed to fetch reservations", "details": str(e)}), 500
