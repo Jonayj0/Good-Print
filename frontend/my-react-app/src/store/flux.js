@@ -7,6 +7,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             products: [],
             selectedProduct: null,
             user: null,
+            reservations: [],
             // Añade otros estados iniciales aquí
         },
         actions: {
@@ -246,7 +247,32 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error fetching product:", error.message);
                     return { success: false, message: error.message }; // Maneja el error
                 }
-            },                                                
+            },
+            getReservations: async () => {
+                try {
+                    let url = import.meta.env.VITE_API_BASE_URL + "/admin/reservations";
+            
+                    const token = localStorage.getItem("token");
+                    const headers = token
+                        ? { 
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}` 
+                        }
+                        : { "Content-Type": "application/json" };
+            
+                    const response = await fetch(url, {
+                        method: "GET",
+                        headers: headers,
+                    });
+            
+                    if (!response.ok) throw new Error("Error al obtener las reservas");
+            
+                    const reservations = await response.json();
+                    setStore({ reservations });
+                } catch (error) {
+                    console.error("Error fetching reservations:", error);
+                }
+            },                                                            
         },
     };
 };
