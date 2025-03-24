@@ -264,24 +264,6 @@ def get_admin_products(current_user):
     return jsonify(products_list), 200
 
 # Ruta protegida para añadir un nuevo producto (solo para admin)
-# @main.route('/admin/products/add', methods=['POST'])
-# @token_required
-# def add_admin_product():  # Cambiado el nombre de la función aquí
-#     data = request.get_json()
-    
-#     new_product = Product(
-#         name=data['name'],
-#         description=data['description'],
-#         price=data['price'],
-#         image_url=data.get('image_url', None)
-#     )
-    
-#     db.session.add(new_product)
-#     db.session.commit()
-    
-#     return jsonify({"message": "Product added successfully!"}), 201
-
-# Ruta protegida para añadir un nuevo producto (solo para admin)
 @main.route('/admin/products/add', methods=['POST'])
 @token_required
 def add_admin_product(current_user):
@@ -409,3 +391,16 @@ def get_admin_reservations(current_user):
     
     except Exception as e:
         return jsonify({"error": "Failed to fetch reservations", "details": str(e)}), 500
+    
+@main.route('/admin/reservations/<int:reservation_id>', methods=['DELETE'])
+@token_required
+def delete_reservation(current_user, reservation_id):
+    reserva = Reserva.query.get(reservation_id)
+
+    if not reserva:
+        return jsonify({"error": "Reserva no encontrada"}), 404
+
+    db.session.delete(reserva)
+    db.session.commit()
+
+    return jsonify({"message": "Reserva eliminada exitosamente"}), 200
