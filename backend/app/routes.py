@@ -382,7 +382,12 @@ def get_admin_reservations(current_user):
                 "mensaje": reserva.mensaje,
                 "fotos": reserva.fotos,
                 "fecha_reserva": reserva.fecha_reserva,
-                "producto": reserva.producto.name
+                # "fecha_reserva": reserva.fecha_reserva.strftime("%d-%m-%Y, %H:%M:%S"),
+                "producto": {
+                "id": reserva.producto.id,
+                "nombre": reserva.producto.name,  # Agregar el nombre del producto
+                "imagen": reserva.producto.image_url  # Agregar la imagen del producto
+            }
             }
             for reserva in reservations
         ]
