@@ -253,8 +253,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     let url = import.meta.env.VITE_API_BASE_URL + "/admin/reservations";
                     const token = localStorage.getItem("token");
 
-                    const headers = token
-                        ? { 
+                    const headers = token ? { 
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${token}` 
                         }
@@ -272,7 +271,34 @@ const getState = ({ getStore, getActions, setStore }) => {
                 } catch (error) {
                     console.error("Error fetching reservations:", error);
                 }
-            },                                                            
+            },
+            deleteReservation: async (reservationId) => {
+                try {
+                    const url = `${import.meta.env.VITE_API_BASE_URL}/admin/reservations/${reservationId}`;
+                    const token = localStorage.getItem("token");
+            
+                    const headers = token ? {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    } : { "Content-Type": "application/json" };
+            
+                    const response = await fetch(url, {
+                        method: "DELETE",
+                        headers: headers
+                    });
+            
+                    if (!response.ok) throw new Error("❌ Error al eliminar la reserva");
+            
+                    // Actualizar la lista de reservas después de eliminar una
+                    const updatedReservations = getStore().reservations.filter(reserva => reserva.id !== reservationId);
+                    setStore({ reservations: updatedReservations });
+            
+                    console.log("✅ Reserva eliminada con éxito");
+                } catch (error) {
+                    console.error("Error eliminando la reserva:", error);
+                }
+            },
+            // Añade otras acciones                                                                        
         },
     };
 };

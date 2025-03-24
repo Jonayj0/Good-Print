@@ -1,18 +1,33 @@
 import React, { useEffect, useContext } from "react";
 import { Context } from "../store/AppContext";
+import Swal from "sweetalert2"; // Importamos SweetAlert2
 
 const AdminReservas = () => {
     const { store, actions } = useContext(Context);
 
-    // useEffect(() => {
-    //     actions.getReservations(true).catch(error => {
-    //         console.error("Error fetching admin reservas:", error);
-    //     });
-    // }, [actions]);
-    
     useEffect(() => {
-        actions.getReservations(); // Llamar al fetch cuando se monta el componente
+        actions.getReservations(); // Cargar reservas al montar
     }, []);
+
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: "Esta acción no se puede deshacer",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                actions.deleteReservation(id).then(() => {
+                    Swal.fire("Eliminado", "La reserva ha sido eliminada.", "success");
+                    actions.getReservations(); // Recargar la lista de reservas
+                });
+            }
+        });
+    };
 
 
     return (
@@ -32,10 +47,31 @@ const AdminReservas = () => {
                                     <p><strong>Fecha:</strong> {reserva.fecha_reserva}</p>
                                     <p><strong>Producto:</strong> {reserva.producto.nombre}</p>
                                     <img src={reserva.producto.imagen} alt="Producto" width="100px" />
-                                    <button className="btn btn-danger" onClick={() => actions.deleteReserva(reserva.id)}>Eliminar</button>
+                                    {/* {reserva.producto && (
+                                    <div>
+                                        <h4>Producto Reservado: {reserva.producto.nombre}</h4>
+                                        <img src={reserva.producto.imagen} alt={reserva.producto.nombre} style={{ width: "150px", height: "auto" }} />
+                                    </div>
+                                    )}
+
+                                    {reserva.fotos && (
+                                        <div>
+                                            <h4>Foto enviada por el cliente:</h4>
+                                            <img src={reserva.fotos} alt="Foto del cliente" style={{ width: "150px", height: "auto" }} />
+                                        </div>
+                                    )} */}
+                                    {/* <img src={reserva.fotos} alt="Producto" width="100px" /> */}
+                                    {/* {reserva.fotos && (
+                                        <div>
+                                            <h4>Foto enviada por el cliente:</h4>
+                                            <img src={reserva.fotos} alt="Foto del cliente" style={{ width: "100px", height: "auto" }} />
+                                        </div>
+                                    )} */}
+                                    <button className="btn btn-danger" onClick={() => handleDelete(reserva.id)}>Eliminar</button>
                                 </div>
                             </div>
                         </div>
+                        
                     ))
                 ) : (
                     <p>No hay reservas pendientes</p>
