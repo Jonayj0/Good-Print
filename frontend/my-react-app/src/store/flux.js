@@ -251,8 +251,8 @@ const getState = ({ getStore, getActions, setStore }) => {
             getReservations: async () => {
                 try {
                     let url = import.meta.env.VITE_API_BASE_URL + "/admin/reservations";
-            
                     const token = localStorage.getItem("token");
+
                     const headers = token
                         ? { 
                             "Content-Type": "application/json",
@@ -265,7 +265,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         headers: headers,
                     });
             
-                    if (!response.ok) throw new Error("Error al obtener las reservas");
+                    if (!response.ok) throw new Error("❌ Error al obtener las reservas");
             
                     const reservations = await response.json();
                     setStore({ reservations });
