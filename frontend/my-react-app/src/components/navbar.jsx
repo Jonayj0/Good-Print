@@ -47,8 +47,11 @@ function Navbar() {
                                 </Link>
                             </li> */}
                             <li className="nav-item">
-                            <Link className="nav-link" to="/nosotros">
-                                    Nosotros
+                                <Link 
+                                    className={`nav-link ${location.pathname === "/" && !location.pathname.includes('/admin') ? "active" : ""}`} 
+                                    to={location.pathname.includes('/admin') ? "/admin/reservas" : "/nosotros"}
+                                >
+                                    {location.pathname.includes('/admin') ? "Reservas" : "Nosotros"}
                                 </Link>
                             </li>
                             <li className="nav-item dropdown me-2">

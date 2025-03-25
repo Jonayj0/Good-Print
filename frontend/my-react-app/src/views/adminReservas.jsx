@@ -61,13 +61,13 @@ const AdminReservas = () => {
                                         </div>
                                     )} */}
                                     {/* <img src={reserva.fotos} alt="Producto" width="100px" /> */}
-                                    {/* {reserva.fotos && (
+                                    {reserva.fotos && (
                                         <div>
-                                            <h4>Foto enviada por el cliente:</h4>
+                                            <p><strong>Foto enviada por el cliente:</strong></p>
                                             <img src={reserva.fotos} alt="Foto del cliente" style={{ width: "100px", height: "auto" }} />
                                         </div>
-                                    )} */}
-                                    <button className="btn btn-danger" onClick={() => handleDelete(reserva.id)}>Eliminar</button>
+                                    )}
+                                    <button className="btn btn-danger mt-2" onClick={() => handleDelete(reserva.id)}>Eliminar</button>
                                 </div>
                             </div>
                         </div>
