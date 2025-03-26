@@ -91,18 +91,26 @@ def create_reservation():
 
         print("Product ID:", producto_id)
 
-        fotos = None
+        # Listar las fotos recibidas
+        fotos_urls = []  # Lista para almacenar las URLs de las fotos
+
+
         for key in request.files:
             fotos = request.files[key]
             print(f"Imagen recibida: {key} - {fotos.filename}")
 
-        if fotos:
-            upload_response = cloudinary.uploader.upload(fotos)
-            fotos_url = upload_response['secure_url']
-            print(f"Foto guardada en Cloudinary: {fotos_url}")
-        else:
-            fotos_url = None
+            if fotos:
+                upload_response = cloudinary.uploader.upload(fotos)
+                fotos_url = upload_response['secure_url']
+                print(f"Foto guardada en Cloudinary: {fotos_url}")
+                fotos_urls.append(fotos_url) # Agregar la URL a la lista de fotos
+
+        if not fotos_urls:
             print("No se recibieron fotos.")
+            fotos_urls = None
+
+        # Verificar si hay fotos para agregar
+        print(f"Lista de fotos subidas: {fotos_urls}")
 
         producto = Product.query.get(producto_id)
         if producto:
@@ -113,7 +121,7 @@ def create_reservation():
                 telefono_cliente=telefono_cliente,
                 email_cliente=email_cliente,
                 mensaje=mensaje,
-                fotos=fotos_url,
+                fotos=",".join(fotos_urls) if fotos_urls else None, # Unir las URLs con comas
                 producto_id=producto_id,
                 cliente_id=1
             )
@@ -125,7 +133,7 @@ def create_reservation():
             with app.app_context():
                 # Enviar correos en segundo plano asegurando el contexto correcto
                 executor.submit(send_confirmation_email, app._get_current_object(), email_cliente, nombre_cliente, producto.name)
-                executor.submit(send_admin_notification, app._get_current_object(), nombre_cliente, email_cliente, producto.name, mensaje, fotos_url, telefono_cliente)
+                executor.submit(send_admin_notification, app._get_current_object(), nombre_cliente, email_cliente, producto.name, mensaje, ",".join(fotos_urls), telefono_cliente)
 
             return jsonify({'message': 'Reserva creada exitosamente!'}), 201
         else:
@@ -155,7 +163,7 @@ def send_confirmation_email(app, to_email, nombre_cliente, producto_nombre):
             print(f"Error al enviar correo de confirmación: {str(e)}")
             raise
 
-def send_admin_notification(app, nombre_cliente, email_cliente, producto_nombre, mensaje_cliente, fotos_url, telefono_cliente):
+def send_admin_notification(app, nombre_cliente, email_cliente, producto_nombre, mensaje_cliente, fotos_urls=None, telefono_cliente=None):
     with app.app_context():
         try:
             admin_email = 'elmundoenbandeja@gmail.com'
@@ -164,12 +172,16 @@ def send_admin_notification(app, nombre_cliente, email_cliente, producto_nombre,
                         f"Cliente: {nombre_cliente}\nEmail: {email_cliente}\nProducto: {producto_nombre}\nTelefono: {telefono_cliente}\n"
                         f"Mensaje del cliente: {mensaje_cliente}\n")
 
-            if fotos_url:
-                response = requests.get(fotos_url)
-                if response.status_code == 200:
-                    msg.attach("imagen.jpg", "image/jpeg", response.content)
-                else:
-                    print(f"Error al descargar la imagen desde Cloudinary: Status {response.status_code}")
+            if fotos_urls:  # Verificar si hay imágenes
+                if isinstance(fotos_urls, str):  # Si está guardado como string (por ejemplo, en la BD)
+                    fotos_urls = fotos_urls.split(",")  # Convertir en lista si es una cadena separada por comas
+                
+                for i, foto_url in enumerate(fotos_urls):
+                    response = requests.get(foto_url.strip())  # Limpiar espacios en blanco
+                    if response.status_code == 200:
+                        msg.attach(f"imagen_{i+1}.jpg", "image/jpeg", response.content)
+                    else:
+                        print(f"Error al descargar la imagen {i+1} desde Cloudinary: Status {response.status_code}")
             
             mail.send(msg)
             print("Correo enviado correctamente")
