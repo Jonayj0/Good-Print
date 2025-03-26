@@ -64,7 +64,15 @@ const AdminReservas = () => {
                                     {reserva.fotos && (
                                         <div>
                                             <p><strong>Foto enviada por el cliente:</strong></p>
-                                            <img src={reserva.fotos} alt="Foto del cliente" style={{ width: "100px", height: "auto" }} />
+                                            {/* Mostrar todas las fotos */}
+                                            {reserva.fotos.split(',').map((fotoUrl, index) => (
+                                                <img
+                                                    key={index}
+                                                    src={fotoUrl}
+                                                    alt={`Foto del cliente ${index + 1}`}
+                                                    style={{ width: "150px", height: "auto", marginRight: "10px" }}
+                                                />
+                                            ))}
                                         </div>
                                     )}
                                     <button className="btn btn-danger mt-2" onClick={() => handleDelete(reserva.id)}>Eliminar</button>
