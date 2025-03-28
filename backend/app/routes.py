@@ -11,6 +11,7 @@ from werkzeug.security import check_password_hash
 from datetime import datetime, timedelta
 import jwt
 from functools import wraps
+from jwt import ExpiredSignatureError, InvalidTokenError
 
 main = Blueprint('main', __name__)
 
@@ -198,26 +199,29 @@ def token_required(f):
 
         # Verifica si el token está en los encabezados
         if 'Authorization' in request.headers:
-            token = request.headers['Authorization'].split(" ")[1] # "Bearer <token>"
+            token = request.headers['Authorization'].split(" ")[1]  # "Bearer <token>"
 
         if not token:
             return jsonify({'message': 'Token is missing!'}), 403
-        
+
         try:
             # Decodifica el token usando la clave secreta
             data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
-            current_user = User.query.get(data['user_id']) # Obtén el usuario de la base de datos
+            current_user = User.query.get(data['user_id'])  # Obtén el usuario de la base de datos
 
             # Verifica el rol del usuario
             if not current_user.is_admin:
                 return jsonify({'message': 'Unauthorized access - Admin only'}), 403
-        
+
+        except ExpiredSignatureError:
+            return jsonify({'message': 'Token has expired! Please log in again.'}), 401
+        except InvalidTokenError:
+            return jsonify({'message': 'Invalid token!'}), 403
         except Exception as e:
-            print(str(e))
-            return jsonify({'message': 'Token is invalid!'}), 403
-        
-        return f(current_user, *args, **kwargs) # Pasa el usuario actual a la función decorada
-    
+            return jsonify({'message': 'Token verification failed!', 'error': str(e)}), 403
+
+        return f(current_user, *args, **kwargs)  # Pasa el usuario actual a la función decorada
+
     return decorator
 
 
