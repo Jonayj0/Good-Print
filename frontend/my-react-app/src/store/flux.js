@@ -52,25 +52,27 @@ const getState = ({ getStore, getActions, setStore }) => {
                 localStorage.removeItem('tokenExpiration'); // Elimina el tiempo de expiración
                 setStore({ user: null }); // Limpia el usuario del store si tienes uno
             },
-            
-            
-            getProducts: async (isAdmin = false) => {
+            getProducts: async (isAdmin = false, category = "") => {
                 try {
-                    // Selecciona la URL según el tipo de usuario
-                    let url = import.meta.env.VITE_API_BASE_URL + "/products";
-                    if (isAdmin) {
-                        url = import.meta.env.VITE_API_BASE_URL + "/admin/products";
+                    // Base URL según el tipo de usuario
+                    let url = import.meta.env.VITE_API_BASE_URL + (isAdmin ? "/admin/products" : "/products");
+            
+                    // Si hay categoría, añadirla como parámetro en la URL
+                    if (category) {
+                        url += `?category=${encodeURIComponent(category)}`;
                     }
             
-                    const token = localStorage.getItem('token');
-                    const headers = token ? { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` 
-                    } : { 'Content-Type': 'application/json' };
+                    const token = localStorage.getItem("token");
+                    const headers = token
+                        ? {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                        }
+                        : { "Content-Type": "application/json" };
             
                     const response = await fetch(url, {
-                        method: 'GET',
-                        headers: headers
+                        method: "GET",
+                        headers: headers,
                     });
             
                     if (!response.ok) throw new Error("Failed to fetch products");
@@ -81,6 +83,35 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error fetching products:", error);
                 }
             },
+            
+            
+            // getProducts: async (isAdmin = false) => {
+            //     try {
+            //         // Selecciona la URL según el tipo de usuario
+            //         let url = import.meta.env.VITE_API_BASE_URL + "/products";
+            //         if (isAdmin) {
+            //             url = import.meta.env.VITE_API_BASE_URL + "/admin/products";
+            //         }
+            
+            //         const token = localStorage.getItem('token');
+            //         const headers = token ? { 
+            //             'Content-Type': 'application/json',
+            //             'Authorization': `Bearer ${token}` 
+            //         } : { 'Content-Type': 'application/json' };
+            
+            //         const response = await fetch(url, {
+            //             method: 'GET',
+            //             headers: headers
+            //         });
+            
+            //         if (!response.ok) throw new Error("Failed to fetch products");
+            
+            //         const products = await response.json();
+            //         setStore({ products });
+            //     } catch (error) {
+            //         console.error("Error fetching products:", error);
+            //     }
+            // },
 
             // Nueva función para añadir un producto
             addProduct: async (productData) => {
@@ -298,6 +329,22 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error eliminando la reserva:", error);
                 }
             },
+            // getProductsByCategory: async (category) => {
+            //     try {
+            //         let url = import.meta.env.VITE_API_BASE_URL + "/products";
+            //         if (category) {
+            //             url += `?category=${encodeURIComponent(category)}`;
+            //         }
+            
+            //         const response = await fetch(url);
+            //         if (!response.ok) throw new Error("Error al obtener productos");
+            
+            //         const products = await response.json();
+            //         setStore({ products });  // Actualiza el store con los productos filtrados
+            //     } catch (error) {
+            //         console.error("Error al filtrar productos por categoría:", error);
+            //     }
+            // },            
             // Añade otras acciones                                                                        
         },
     };
