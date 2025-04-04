@@ -40,9 +40,37 @@ def add_product():
     return jsonify({"message": "Product added successfully!"}), 201
 
 #-----------------------------------------VER TODOS LOS PRODUCTOS--------------------------------///////
+# @main.route('/products', methods=['GET'])
+# def get_products():
+#     products = Product.query.all()
+#     products_list = [
+#         {
+#             "id": product.id,
+#             "name": product.name,
+#             "description": product.description,
+#             "price": product.price,
+#             "image_url": product.image_url,
+#             "category": product.category
+#         }
+#         for product in products
+#     ]
+#     return jsonify(products_list), 200
+
+
+#-----------------------------------VER TODOS LOS PRODUCTOS Y CATEGORIAS--------------------------------///////
 @main.route('/products', methods=['GET'])
 def get_products():
-    products = Product.query.all()
+
+    category = request.args.get('category')  # Obtener la categoría desde la URL
+
+    if category:  # Si hay una categoría en la URL, filtrar los productos
+        products = Product.query.filter_by(category=category).all()
+    else:  # Si no hay categoría, traer todos los productos
+        products = Product.query.all()
+    if not products:
+        return jsonify({"error": "No products found"}), 404
+    # Convertir los productos a un formato JSON
+    
     products_list = [
         {
             "id": product.id,
