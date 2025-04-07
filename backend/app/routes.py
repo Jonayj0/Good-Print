@@ -323,7 +323,7 @@ def add_admin_product(current_user):
             description=data['description'],
             price=data['price'],
             image_url=data.get('image_url', None),
-            category=data.get['category']
+            category=data.get('category')
         )
         
         db.session.add(new_product)
