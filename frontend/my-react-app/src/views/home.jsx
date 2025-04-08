@@ -23,6 +23,10 @@ function Home() {
     });
   }, [selectedCategory]); // Se ejecuta cada vez que cambia la categoría
 
+  useEffect(() => {
+    actions.getCategories();
+  }, []);
+
   return (
     <div className="container-fluid">
       <div className="home container text-center">
@@ -33,22 +37,23 @@ function Home() {
           alt="imagen-gp"
         />
         {/* 🔽 Dropdown para seleccionar la categoría 🔽 */}
-        <div className="filter-container mb-4">
-                    <label htmlFor="category-select">Busca por categoría:</label>
-                    <select
-                        id="category-select"
-                        className="form-select"
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                    >
-                        <option value="">Todas</option>
-                        <option value="Bolsos">Bolsos</option>
-                        <option value="Llaveros">Llaveros</option>
-                        <option value="Tazas">Tazas</option>
-                        {/* Agrega más categorías según tu base de datos */}
-                    </select>
-                </div>
-            </div>
+          <div className="filter-container mb-4">
+                <label htmlFor="category-select">Busca por categoría:</label>
+                <select
+                    id="category-select"
+                    className="form-select"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                    <option value="">Todas</option>
+                    {store.categories.map((cat, idx) => (
+                        <option key={idx} value={cat}>
+                            {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                        </option>
+                    ))}
+                </select>
+          </div>
+      </div>
       {/* 🔼 Fin del Dropdown 🔼 */}
       <section className="row tarjetas-container">
         {Array.isArray(store.products) && store.products.length > 0 ? (

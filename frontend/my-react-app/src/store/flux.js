@@ -8,6 +8,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             selectedProduct: null,
             user: null,
             reservations: [],
+            categories: [],
             // Añade otros estados iniciales aquí
         },
         actions: {
@@ -59,7 +60,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             
                     // Si hay categoría, añadirla como parámetro en la URL
                     if (category) {
-                        url += `?category=${encodeURIComponent(category)}`;
+                        url += `?category=${encodeURIComponent(category.toLowerCase().replace(/s$/, ""))}`;
                     }
             
                     const token = localStorage.getItem("token");
@@ -329,6 +330,24 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error eliminando la reserva:", error);
                 }
             },
+            getCategories: async () => {
+                try {
+                    const resp = await fetch(`${import.meta.env.VITE_API_BASE_URL}/categories`);
+                    if (!resp.ok) throw new Error("Error al obtener categorías");
+                    let data = await resp.json();
+            
+                    // Normalizar: minúsculas y singular (básico)
+                    const categoriasNormalizadas = [...new Set(data.map(cat =>
+                        cat.trim().toLowerCase().replace(/s$/, "") // elimina plural simple
+                    ))];
+            
+                    setStore({ categories: categoriasNormalizadas });
+                } catch (error) {
+                    console.error("Error al traer categorías", error);
+                }
+            }
+            
+            // Aquí puedes añadir más acciones según sea necesario            
             // getProductsByCategory: async (category) => {
             //     try {
             //         let url = import.meta.env.VITE_API_BASE_URL + "/products";
