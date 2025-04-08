@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 import jwt
 from functools import wraps
 from jwt import ExpiredSignatureError, InvalidTokenError
+from urllib.parse import unquote
 
 main = Blueprint('main', __name__)
 
@@ -34,7 +35,8 @@ def add_product():
         name=data['name'],
         description=data['description'],
         price=data['price'],
-        image_url=data.get('image_url', None)
+        image_url=data.get('image_url', None),
+        category=data.get('category', None)
     )
     db.session.add(new_product)
     db.session.commit()
@@ -59,18 +61,51 @@ def add_product():
 
 
 #-----------------------------------VER TODOS LOS PRODUCTOS Y CATEGORIAS--------------------------------///////
+# @main.route('/products', methods=['GET'])
+# def get_products():
+
+#     category = request.args.get('category')  # Obtener la categoría desde la URL
+
+#     if category:  # Si hay una categoría en la URL, filtrar los productos
+#         products = Product.query.filter_by(category=category).all()
+#     else:  # Si no hay categoría, traer todos los productos
+#         products = Product.query.all()
+#     if not products:
+#         return jsonify({"error": "No products found"}), 404
+#     # Convertir los productos a un formato JSON
+    
+#     products_list = [
+#         {
+#             "id": product.id,
+#             "name": product.name,
+#             "description": product.description,
+#             "price": product.price,
+#             "image_url": product.image_url,
+#             "category": product.category
+#         }
+#         for product in products
+#     ]
+#     return jsonify(products_list), 200
+
 @main.route('/products', methods=['GET'])
 def get_products():
-
-    category = request.args.get('category')  # Obtener la categoría desde la URL
-
-    if category:  # Si hay una categoría en la URL, filtrar los productos
-        products = Product.query.filter_by(category=category).all()
-    else:  # Si no hay categoría, traer todos los productos
+    category = request.args.get('category')
+    
+    if category:
+        # Decodificar y normalizar igual que al guardar
+        decoded_category = unquote(category).strip().lower()
+        if decoded_category.endswith('s') and len(decoded_category) > 3:
+            search_term = decoded_category[:-1]
+        else:
+            search_term = decoded_category
+        
+        # Búsqueda flexible (incluye plural y singular)
+        products = Product.query.filter(
+            (Product.category.ilike(f"%{search_term}%")) |
+            (Product.category.ilike(f"%{search_term}s%"))
+        ).all()
+    else:
         products = Product.query.all()
-    if not products:
-        return jsonify({"error": "No products found"}), 404
-    # Convertir los productos a un formato JSON
     
     products_list = [
         {
@@ -83,8 +118,9 @@ def get_products():
         }
         for product in products
     ]
+    
+    # Devuelve lista vacía si no hay productos, en lugar de 404
     return jsonify(products_list), 200
-
 #-----------------------------------------VER UN PRODUCTO--------------------------------///////
 @main.route('/products/<int:product_id>', methods=['GET'])
 def get_product_by_id(product_id):
@@ -312,28 +348,55 @@ def get_admin_products(current_user):
 @token_required
 def add_admin_product(current_user):
     data = request.get_json()
-    
-    # Validar campos requeridos
+
     if not all(key in data for key in ['name', 'description', 'price', 'category']):
         return jsonify({"error": "Missing required product fields"}), 400
-    
+
     try:
+        # Normalizar categoría: minúsculas y singular
+        raw_category = data['category'].strip().lower()
+
+        # Opcional: lógica para singularizar (muy básica)
+        if raw_category.endswith('s') and len(raw_category) > 3:
+            normalized_category = raw_category[:-1]  # elimina la 's' final
+        else:
+            normalized_category = raw_category
+
+        # Capitalizar el nombre del producto
+        capitalized_name = data['name'].capitalize()  # Primera letra mayúscula, resto minúsculas
+        # Otra opción: data['name'].title()  # Primera letra de cada palabra mayúscula
+        capitalized_description = data['description'].capitalize()
+
         new_product = Product(
-            name=data['name'],
-            description=data['description'],
+            name=capitalized_name,
+            description=capitalized_description,
             price=data['price'],
-            image_url=data.get('image_url', None),
-            category=data.get('category')
+            image_url=data.get('image_url'),
+            category=normalized_category
         )
-        
+
         db.session.add(new_product)
         db.session.commit()
-        
+
         return jsonify({"message": "Product added successfully!"}), 201
-    
+
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Failed to add product", "details": str(e)}), 500
+
+@main.route('/categories', methods=['GET'])
+def get_categories():
+    categories = db.session.query(Product.category).distinct().all()
+    # Aplicar normalización a las categorías existentes
+    category_list = []
+    for cat in categories:
+        if cat[0]:
+            normalized = cat[0].strip().lower()
+            if normalized.endswith('s') and len(normalized) > 3:
+                normalized = normalized[:-1]
+            category_list.append(normalized)
+    return jsonify(sorted(list(set(category_list)))), 200  # Elimina duplicados y ordena la lista
+
 
 # Al final del archivo, imprime las rutas disponibles
 # @main.route('/test', methods=['GET'])
@@ -358,11 +421,17 @@ def edit_admin_product(current_user, product_id):
         if not product:
             return jsonify({"error": "Product not found"}), 404
         
+        # Función para capitalizar (primera letra mayúscula, resto minúsculas)
+        def capitalize_text(text):
+            if not text or len(text) == 0:
+                return text
+            return text[0].upper() + text[1:].lower()
+        
         # Validar campos requeridos y actualizar solo los campos enviados
         if 'name' in data:
-            product.name = data['name']
+            product.name = capitalize_text(data['name'])  # Capitalizar nombre
         if 'description' in data:
-            product.description = data['description']
+            product.description = capitalize_text(data['description'])  # Capitalizar descripción
         if 'price' in data:
             product.price = data['price']
         if 'image_url' in data:
