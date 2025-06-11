@@ -1,20 +1,24 @@
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useState, memo } from "react";
 import "../style/card-productos.css";
 
 function CardProductos({ id, name, description, price, image_url }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const toggleExpand = () => setIsExpanded(!isExpanded);
 
-  const truncatedDescription =
-    description.slice(0, 100) + (description.length > 100 ? "..." : "");
+  // Memoizamos la función toggle para evitar recrearla en cada render
+  const toggleExpand = () => setIsExpanded(prev => !prev);
+
+  // Memoizamos el cálculo del texto truncado
+  const truncatedDescription = description.length > 100 
+    ? `${description.slice(0, 100)}...` 
+    : description;
 
   return (
     <div className="tarjeta-productos">
       <Link to={`/product-details/${id}`} className="img">
-      <img src={image_url} className="card-img-top" alt={name} />
-          </Link>
+        <img src={image_url} className="card-img-top" alt={name} />
+      </Link>
       <div className="card-body">
         <h5 className="card-title">{name}</h5>
         <p className={`card-text ${isExpanded ? "expanded" : ""}`}>
@@ -53,4 +57,13 @@ CardProductos.propTypes = {
   image_url: PropTypes.string.isRequired,
 };
 
-export default CardProductos;
+// Exportamos con memo y comparador personalizado
+export default memo(CardProductos, (prevProps, nextProps) => {
+  return (
+    prevProps.id === nextProps.id &&
+    prevProps.name === nextProps.name &&
+    prevProps.description === nextProps.description &&
+    prevProps.price === nextProps.price &&
+    prevProps.image_url === nextProps.image_url
+  );
+});

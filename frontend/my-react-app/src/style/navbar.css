@@ -1,6 +1,8 @@
 .navbar {
     background-color: aquamarine;
     padding: 20px;
+    height: 150px; /* Altura fija */
+    min-height: 150px; /* Para asegurar */
 }
 .logo-img {
     font-size: 10px;

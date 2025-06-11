@@ -1,13 +1,17 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import { Context } from "../store/AppContext";
 import "../style/home.css";
 import CardProductos from "../components/card-productos.jsx";
 import SplitText from "../components/SplitText.jsx";
+import imagenHome from "../assets/Imagen-Home-GP.jpeg"; // Asegúrate de que la ruta sea correcta
 
 function Home() {
   const { store, actions } = useContext(Context);
   const [selectedCategory, setSelectedCategory] = useState("");
 
+  const productsToShow = useMemo(() => {
+    return store.products || [];
+  }, [store.products]);
   // useEffect(() => {
   //   if (!store.products.length) {
   //     actions.getProducts().catch((error) => {
@@ -28,14 +32,18 @@ function Home() {
   }, []);
 
   return (
-    <div className="container-fluid">
+    <div className="main-container container-fluid p-0 overflow-hidden" style={{ minHeight: '100vh' }}>
       <div className="home container text-center">
-        <h1 className="titulo-home"><SplitText text="Bienvenid@ a Good Print" delay={60}/></h1>
-        <img
-          className="foto-home mb-5 mt-3"
-          src="https://th.bing.com/th/id/OIP.rrHrZPZw7SmAaa9kGcRilAHaE8?w=283&h=189&c=7&r=0&o=5&dpr=1.3&pid=1.7"
-          alt="imagen-gp"
-        />
+      <div className="titulo-container text-center position-relative">
+  <h1 className="titulo-home">
+    <SplitText text="Bienvenid@ a Good Print" delay={60} />
+  </h1>
+  <img
+    className="foto-home mb-5 mt-3"
+    src={imagenHome}
+    alt="imagen-gp"
+  />
+</div>
         {/* 🔽 Dropdown para seleccionar la categoría 🔽 */}
           <div className="filter-container mb-4">
                 <label htmlFor="category-select">Busca por categoría:</label>
@@ -55,11 +63,12 @@ function Home() {
           </div>
       </div>
       {/* 🔼 Fin del Dropdown 🔼 */}
-      <section className="row tarjetas-container">
+      <section className="row tarjetas-container container">
         {Array.isArray(store.products) && store.products.length > 0 ? (
           store.products.map((product) => (
             <div key={product.id} className="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-3 mb-4 d-flex justify-content-center">
               <CardProductos
+                key={product.id}
                 id={product.id}
                 name={product.name || "Unknown Name"}
                 description={product.description || "No description available"}

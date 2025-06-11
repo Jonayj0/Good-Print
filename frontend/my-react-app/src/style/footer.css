@@ -1,4 +1,6 @@
 .footer {
     background-color: rgb(233, 226, 98);
     padding: 20px;
+    height: 100px; /* Ajusta según tu diseño */
+    min-height: 100px;
 }

@@ -1,11 +1,19 @@
 .home {
-  position: relative;
   width: 100%;
-  max-width: 80%; /* Ajusta el tamaño máximo según sea necesario */
-  height: auto;
-  overflow: hidden; /* Asegura que la imagen no desborde el contenedor */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
 }
 
+.main-container {
+  display: grid;
+  grid-template-rows: 
+    var(--navbar-height) 
+    auto 
+    1fr 
+    var(--footer-height);
+  min-height: 100vh;
+}
 .foto-home {
   width: 100%;
   height: 300px; /* Establece una altura fija para hacer la imagen más chata */
@@ -13,9 +21,15 @@
   object-fit: cover; /* Ajusta cómo se redimensiona la imagen */
   object-position: center; /* Centra la imagen si es recortada */
 }
+.titulo-container {
+  position: relative;
+  width: 100%;
+  height: 300px; /* o el tamaño que desees */
+  overflow: hidden;
+  contain: strict; /* Aisla el layout */
+}
 
 .titulo-home {
-  font-size: 10vw; /* Utiliza una unidad relativa para que el texto se escale */
   font-weight: bold;
   text-shadow: 3px 3px 1px rgba(0, 0, 0, 0.7); /* Para mejorar la legibilidad del texto */
   position: absolute;
@@ -23,9 +37,6 @@
   left: 50%;
   transform: translate(-50%, -50%);
   color: rgb(64, 248, 245);
-  text-align: center;
-  padding: 0 10px; /* Añade padding para evitar que el texto se toque con los bordes en pantallas pequeñas */
-  max-width: 90%; /* Limita el ancho del texto en pantallas pequeñas */
 }
 
 /* Media queries para ajustar el diseño en diferentes tamaños de pantalla */
@@ -61,4 +72,15 @@
   }
 }
 
-  
+.filter-container {
+  margin: 1rem auto;
+  max-width: 500px;
+}
+
+.tarjetas-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  contain: content; /* Previene reflows */
+}
