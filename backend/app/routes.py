@@ -392,7 +392,10 @@ def get_categories():
     for cat in categories:
         if cat[0]:
             normalized = cat[0].strip().lower()
-            if normalized.endswith('s') and len(normalized) > 3:
+            # Normalización más robusta
+            if normalized.endswith('ies') and len(normalized) > 4:
+                normalized = normalized[:-3] + 'y'  # "categories" -> "category"
+            elif normalized.endswith('s') and len(normalized) > 3:
                 normalized = normalized[:-1]
             category_list.append(normalized)
     return jsonify(sorted(list(set(category_list)))), 200  # Elimina duplicados y ordena la lista
