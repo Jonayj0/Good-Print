@@ -35,7 +35,7 @@ function Home() {
           <div>
             <SplitText text="Bienvenid@ a" delay={60} />
           </div>
-          <div>
+          <div className="titulo-home-2">
             <SplitText text="Good Print" delay={60} />
           </div>
         </h1>
