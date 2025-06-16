@@ -28,6 +28,13 @@
   max-width: 90%; /* Limita el ancho del texto en pantallas pequeñas */
 }
 
+.titulo-home-2{
+  margin-bottom: 8rem; /* Añade un margen inferior para evitar que el texto se superponga con otros elementos */
+  z-index: 1; /* Asegura que el texto esté por encima de la imagen */
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  overflow: hidden; /* Oculta el texto que se desborda */
+}
+
 /* Media queries para ajustar el diseño en diferentes tamaños de pantalla */
 
 /* Pequeñas pantallas (teléfonos) */
