@@ -31,7 +31,14 @@ function Home() {
   return (
     <div className="container-fluid">
       <div className="home container text-center">
-        <h1 className="titulo-home"><SplitText text="Bienvenid@ a Good Print" delay={60}/></h1>
+        <h1 className="titulo-home">
+          <div>
+            <SplitText text="Bienvenid@ a" delay={60} />
+          </div>
+          <div>
+            <SplitText text="Good Print" delay={60} />
+          </div>
+        </h1>
         <img
           className="foto-home mb-5 mt-3"
           src={homeImagen}
