@@ -33,7 +33,7 @@ function Home() {
       <div className="home container text-center">
         <h1 className="titulo-home">
           <div>
-            <SplitText text="Bienvenid@ a" delay={60} />
+            <SplitText text="Bienvenid@" delay={60} />
           </div>
           <div className="titulo-home-2">
             <SplitText text="Good Print" delay={60} />
