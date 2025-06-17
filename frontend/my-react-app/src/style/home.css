@@ -33,7 +33,10 @@
   z-index: 1; /* Asegura que el texto esté por encima de la imagen */
   white-space: nowrap; /* Evita que el texto se divida en varias líneas */
   overflow: hidden; /* Oculta el texto que se desborda */
+  font-family: 'MiFuente', sans-serif;
+  color: #ffffff;
 }
+
 
 /* Media queries para ajustar el diseño en diferentes tamaños de pantalla */
 

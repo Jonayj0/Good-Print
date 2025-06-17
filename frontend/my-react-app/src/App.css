@@ -40,3 +40,10 @@
 .read-the-docs {
   color: #888;
 }
+/* Importación de la fuente personalizada */
+@font-face {
+  font-family: 'MiFuente';
+  src: url('/fonts/Daylight&moonlight_PersonalUseOnly.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
