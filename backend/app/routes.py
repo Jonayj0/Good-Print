@@ -374,24 +374,24 @@ def get_admin_products(current_user):
 @token_required
 def add_admin_product(current_user):
     data = request.get_json()
-    required_fields = ['name', 'description', 'price', 'categories']  # categorías obligatorias
+    required_fields = ['name', 'description', 'price', 'categories']
 
     if not all(key in data for key in required_fields):
         return jsonify({"error": "Missing required product fields"}), 400
 
     try:
-        # Normalizar categorías enviadas (minúsculas y sin plurales)
+        # Normalizar y capitalizar categorías
         input_cats = [cat.strip().lower() for cat in data['categories']]
         normalized_cats = [
-            cat[:-1] if (cat.endswith('s') and len(cat) > 3) else cat
+            (cat[:-1] if (cat.endswith('s') and len(cat) > 3) else cat).capitalize()
             for cat in input_cats
         ]
 
-        # Buscar todas las categorías ya existentes en una sola query
+        # Buscar categorías existentes
         existing_cats = Category.query.filter(Category.name.in_(normalized_cats)).all()
         existing_cat_names = {cat.name for cat in existing_cats}
 
-        # Crear las categorías que no existan
+        # Crear las nuevas
         new_cats = []
         for cat_name in normalized_cats:
             if cat_name not in existing_cat_names:
@@ -399,19 +399,25 @@ def add_admin_product(current_user):
                 db.session.add(new_cat)
                 new_cats.append(new_cat)
 
-        # Esperamos a hacer commit al final (para que el id se genere en ese momento)
         all_cats = existing_cats + new_cats
 
-        # Procesar evento si viene
+        # Procesar eventos normalizados y capitalizados
         product_events = []
-        if 'event' in data and data['event']:
-            raw_event = data['event'].strip().lower()
-            event_name = raw_event[:-1] if (raw_event.endswith('s') and len(raw_event) > 3) else raw_event
-            event = Event.query.filter_by(name=event_name).first()
-            if not event:
-                event = Event(name=event_name)
-                db.session.add(event)
-            product_events.append(event)
+        if 'events' in data and isinstance(data['events'], list):
+            seen = set()
+            for raw_event in data['events']:
+                raw_event = raw_event.strip().lower()
+                event_name = (raw_event[:-1] if (raw_event.endswith('s') and len(raw_event) > 3) else raw_event).capitalize()
+                if not event_name or event_name in seen:
+                    continue
+                seen.add(event_name)
+
+                event = Event.query.filter_by(name=event_name).first()
+                if not event:
+                    event = Event(name=event_name)
+                    db.session.add(event)
+                    db.session.flush()  # 👈 Esto asegura que event.id esté disponible
+                product_events.append(event)
 
         # Crear producto
         new_product = Product(
@@ -433,6 +439,7 @@ def add_admin_product(current_user):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Failed to add product", "details": str(e)}), 500
+
 
 
 
