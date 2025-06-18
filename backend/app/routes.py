@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, current_app
 from app import db, mail
-from app.models import Product, Reserva, User
+from app.models import Product, Reserva, User, Category, Event
 import cloudinary
 import cloudinary.uploader
 from flask_mail import Message
@@ -513,6 +513,7 @@ def get_admin_reservations(current_user):
     except Exception as e:
         return jsonify({"error": "Failed to fetch reservations", "details": str(e)}), 500
     
+# Ruta protegida para obtener Eliminar reservas (solo para admin)    
 @main.route('/admin/reservations/<int:reservation_id>', methods=['DELETE'])
 @token_required
 def delete_reservation(current_user, reservation_id):
@@ -525,3 +526,17 @@ def delete_reservation(current_user, reservation_id):
     db.session.commit()
 
     return jsonify({"message": "Reserva eliminada exitosamente"}), 200
+
+# Ruta para obtener todas las categorias
+@main.route('/categories', methods=['GET'])
+def get_categories():
+    categories = Category.query.all()
+    categories_list = [{"id": c.id, "name": c.name} for c in categories]
+    return jsonify(categories_list), 200
+
+# Ruta para obtener todas los eventos
+@main.route('/events', methods=['GET'])
+def get_events():
+    events = Event.query.all()
+    events_list = [{"id": e.id, "title": e.title, "date": e.date.isoformat()} for e in events]
+    return jsonify(events_list), 200

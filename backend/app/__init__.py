@@ -48,6 +48,8 @@ def create_app():
     # Añade vistas de admin
     admin.add_view(ModelView(models.Product, db.session))
     admin.add_view(ModelView(models.Reserva, db.session))
+    admin.add_view(ModelView(models.Category, db.session))
+    admin.add_view(ModelView(models.Event, db.session))
 
     app.register_blueprint(main)
 
