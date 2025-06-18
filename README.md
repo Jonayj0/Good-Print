@@ -21,18 +21,24 @@ backend/
 
 └── app
 
- ├── __init__.py
- ├── models/
- │ └── # Archivos de definición de modelos de base de datos SQLAlchemy
- │
- ├── routes/
- │ └── # Archivos de rutas Flask para API y vistas
+│ ├── __init__.py
+
+│ ├── models/
+
+│ ││ └── # Archivos de definición de modelos de base de datos SQLAlchemy
+
+│ │
+│ ├── routes/
+│ │ └── # Archivos de rutas Flask para API y vistas
  
-├── instance
-│ └── site.db #Aquí se guarda la base de datos (sqlite)
-├── venv
-├── run.py
-│
+│ ├── instance
+
+│ │ └── site.db #Aquí se guarda la base de datos (sqlite)
+
+│ ├── venv
+
+│ ├── run.py
+│ │
 
 frontend/
 │
