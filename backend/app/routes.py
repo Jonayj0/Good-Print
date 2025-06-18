@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, current_app
 from app import db, mail
-from app.models import Product, Reserva, User
+from app.models import Product, Reserva, User, Category, Event
 import cloudinary
 import cloudinary.uploader
 from flask_mail import Message
@@ -28,19 +28,38 @@ executor = ThreadPoolExecutor()
 def home():
     return jsonify(message="Welcome to the Flask API!")
 
-@main.route('/add_product', methods=['POST'])
-def add_product():
-    data = request.get_json()
-    new_product = Product(
-        name=data['name'],
-        description=data['description'],
-        price=data['price'],
-        image_url=data.get('image_url', None),
-        category=data.get('category', None)
-    )
-    db.session.add(new_product)
-    db.session.commit()
-    return jsonify({"message": "Product added successfully!"}), 201
+
+#---------------------------------------------AÑADIR UN PRODUCTO PUBLICO BORRAR--------------------------------///////
+# @main.route('/add_product', methods=['POST'])
+# def add_product():
+#     data = request.get_json()
+    
+#     new_product = Product(
+#         name=data['name'],
+#         description=data['description'],
+#         price=data['price'],
+#         image_url=data.get('image_url', None)
+#     )
+    
+#     # Asociar categorías (suponiendo que envías lista de nombres)
+#     category_names = data.get('categories', [])  # ejemplo: ["Electrónica", "Hogar"]
+#     for cat_name in category_names:
+#         category = Category.query.filter_by(name=cat_name).first()
+#         if category:
+#             new_product.categories.append(category)
+    
+#     # Asociar eventos (lista de nombres)
+#     event_names = data.get('events', [])
+#     for event_name in event_names:
+#         event = Event.query.filter_by(name=event_name).first()
+#         if event:
+#             new_product.events.append(event)
+    
+#     db.session.add(new_product)
+#     db.session.commit()
+    
+#     return jsonify({"message": "Product added successfully!"}), 201
+
 
 #-----------------------------------------VER TODOS LOS PRODUCTOS--------------------------------///////
 # @main.route('/products', methods=['GET'])
@@ -87,40 +106,43 @@ def add_product():
 #     ]
 #     return jsonify(products_list), 200
 
+#-----------------------------------------VER TODOS LOS PRODUCTOS--------------------------------///////
 @main.route('/products', methods=['GET'])
 def get_products():
-    category = request.args.get('category')
-    
-    if category:
-        # Decodificar y normalizar igual que al guardar
-        decoded_category = unquote(category).strip().lower()
-        if decoded_category.endswith('s') and len(decoded_category) > 3:
-            search_term = decoded_category[:-1]
-        else:
-            search_term = decoded_category
+    try:
+        category_param = request.args.get('category')
         
-        # Búsqueda flexible (incluye plural y singular)
-        products = Product.query.filter(
-            (Product.category.ilike(f"%{search_term}%")) |
-            (Product.category.ilike(f"%{search_term}s%"))
-        ).all()
-    else:
-        products = Product.query.all()
-    
-    products_list = [
-        {
-            "id": product.id,
-            "name": product.name,
-            "description": product.description,
-            "price": product.price,
-            "image_url": product.image_url,
-            "category": product.category
-        }
-        for product in products
-    ]
-    
-    # Devuelve lista vacía si no hay productos, en lugar de 404
-    return jsonify(products_list), 200
+        if category_param:
+            decoded_category = unquote(category_param).strip().lower()
+            if decoded_category.endswith('s') and len(decoded_category) > 3:
+                search_term = decoded_category[:-1]
+            else:
+                search_term = decoded_category
+
+            products = Product.query.join(Product.categories).filter(
+                Category.name.ilike(f"%{search_term}%")
+            ).all()
+        else:
+            products = Product.query.all()
+
+        products_list = [
+            {
+                "id": product.id,
+                "name": product.name,
+                "description": product.description,
+                "price": product.price,
+                "image_url": product.image_url,
+                "categories": [cat.name for cat in product.categories],
+                # "events": [e.name for e in product.events]  # Si quieres incluir eventos
+            }
+            for product in products
+        ]
+        return jsonify(products_list), 200
+
+    except Exception as e:
+        return jsonify({"error": "Error fetching products", "details": str(e)}), 500
+
+
 #-----------------------------------------VER UN PRODUCTO--------------------------------///////
 @main.route('/products/<int:product_id>', methods=['GET'])
 def get_product_by_id(product_id):
@@ -128,18 +150,20 @@ def get_product_by_id(product_id):
         product = Product.query.get(product_id)
         if not product:
             return jsonify({"error": "Product not found"}), 404
+        
         product_data = {
             "id": product.id,
             "name": product.name,
             "description": product.description,
             "price": product.price,
             "image_url": product.image_url,
-            "category": product.category
-
+            "categories": [cat.name for cat in product.categories],  # Cambio importante
+            "events": [event.name for event in product.events]  # Opcional, si quieres incluir eventos
         }
         return jsonify(product_data), 200
     except Exception as e:
         return jsonify({"error": "Failed to fetch product", "details": str(e)}), 500
+
 
 #-------------------------------------------------RESERVAS----------------------------------
 @main.route('/api/reservation', methods=['POST'])
@@ -325,7 +349,7 @@ def login():
 #     return jsonify({'message': 'Welcome to the admin panel!'}), 200
 
 
-# Ruta protegida para obtener productos (solo para admin)
+# ----------------------------Ruta protegida para obtener productos (solo para admin)------------------------------------
 @main.route('/admin/products', methods=['GET'])
 @token_required
 def get_admin_products(current_user):
@@ -337,43 +361,75 @@ def get_admin_products(current_user):
             "description": product.description,
             "price": product.price,
             "image_url": product.image_url,
-            "category": product.category
+            "categories": [cat.name for cat in product.categories],
+            "events": [event.name for event in product.events]
         }
         for product in products
     ]
     return jsonify(products_list), 200
 
-# Ruta protegida para añadir un nuevo producto (solo para admin)
+
+# ----------------------Ruta protegida para añadir un nuevo producto (solo para admin)----------------------------
 @main.route('/admin/products/add', methods=['POST'])
 @token_required
 def add_admin_product(current_user):
     data = request.get_json()
+    required_fields = ['name', 'description', 'price', 'categories']
 
-    if not all(key in data for key in ['name', 'description', 'price', 'category']):
+    if not all(key in data for key in required_fields):
         return jsonify({"error": "Missing required product fields"}), 400
 
     try:
-        # Normalizar categoría: minúsculas y singular
-        raw_category = data['category'].strip().lower()
+        # Normalizar y capitalizar categorías
+        input_cats = [cat.strip().lower() for cat in data['categories']]
+        normalized_cats = [
+            (cat[:-1] if (cat.endswith('s') and len(cat) > 3) else cat).capitalize()
+            for cat in input_cats
+        ]
 
-        # Opcional: lógica para singularizar (muy básica)
-        if raw_category.endswith('s') and len(raw_category) > 3:
-            normalized_category = raw_category[:-1]  # elimina la 's' final
-        else:
-            normalized_category = raw_category
+        # Buscar categorías existentes
+        existing_cats = Category.query.filter(Category.name.in_(normalized_cats)).all()
+        existing_cat_names = {cat.name for cat in existing_cats}
 
-        # Capitalizar el nombre del producto
-        capitalized_name = data['name'].capitalize()  # Primera letra mayúscula, resto minúsculas
-        # Otra opción: data['name'].title()  # Primera letra de cada palabra mayúscula
-        capitalized_description = data['description'].capitalize()
+        # Crear las nuevas
+        new_cats = []
+        for cat_name in normalized_cats:
+            if cat_name not in existing_cat_names:
+                new_cat = Category(name=cat_name)
+                db.session.add(new_cat)
+                new_cats.append(new_cat)
 
+        all_cats = existing_cats + new_cats
+
+        # Procesar eventos normalizados y capitalizados
+        product_events = []
+        if 'events' in data and isinstance(data['events'], list):
+            seen = set()
+            for raw_event in data['events']:
+                raw_event = raw_event.strip().lower()
+                event_name = (raw_event[:-1] if (raw_event.endswith('s') and len(raw_event) > 3) else raw_event).capitalize()
+                if not event_name or event_name in seen:
+                    continue
+                seen.add(event_name)
+
+                event = Event.query.filter_by(name=event_name).first()
+                if not event:
+                    event = Event(name=event_name)
+                    db.session.add(event)
+                    db.session.flush()  # 👈 Esto asegura que event.id esté disponible
+                product_events.append(event)
+
+        # Crear producto
         new_product = Product(
-            name=capitalized_name,
-            description=capitalized_description,
+            name=data['name'].capitalize(),
+            description=data['description'].capitalize(),
             price=data['price'],
-            image_url=data.get('image_url'),
-            category=normalized_category
+            image_url=data.get('image_url')
         )
+
+        # Asociar categorías y eventos
+        new_product.categories.extend(all_cats)
+        new_product.events.extend(product_events)
 
         db.session.add(new_product)
         db.session.commit()
@@ -384,21 +440,8 @@ def add_admin_product(current_user):
         db.session.rollback()
         return jsonify({"error": "Failed to add product", "details": str(e)}), 500
 
-@main.route('/categories', methods=['GET'])
-def get_categories():
-    categories = db.session.query(Product.category).distinct().all()
-    # Aplicar normalización a las categorías existentes
-    category_list = []
-    for cat in categories:
-        if cat[0]:
-            normalized = cat[0].strip().lower()
-            # Normalización más robusta
-            if normalized.endswith('ies') and len(normalized) > 4:
-                normalized = normalized[:-3] + 'y'  # "categories" -> "category"
-            elif normalized.endswith('s') and len(normalized) > 3:
-                normalized = normalized[:-1]
-            category_list.append(normalized)
-    return jsonify(sorted(list(set(category_list)))), 200  # Elimina duplicados y ordena la lista
+
+
 
 
 # Al final del archivo, imprime las rutas disponibles
@@ -410,44 +453,71 @@ def get_categories():
 @main.route('/admin/products/edit/<int:product_id>', methods=['PUT'])
 @token_required
 def edit_admin_product(current_user, product_id):
-    
-    # Verificar si el usuario es administrador
     if not current_user.is_admin:
         return jsonify({"error": "Unauthorized"}), 403
-    
-    # Obtener los datos enviados por el cliente
+
     data = request.get_json()
-    
+
+    def capitalize_text(text):
+        if not text or len(text) == 0:
+            return text
+        return text[0].upper() + text[1:].lower()
+
+    def normalize_name(name):
+        name = name.strip().lower()
+        if not name:
+            return None
+        if name.endswith('s') and len(name) > 3:
+            name = name[:-1]
+        return name.capitalize()
+
     try:
-        # Buscar el producto en la base de datos
         product = Product.query.get(product_id)
         if not product:
             return jsonify({"error": "Product not found"}), 404
-        
-        # Función para capitalizar (primera letra mayúscula, resto minúsculas)
-        def capitalize_text(text):
-            if not text or len(text) == 0:
-                return text
-            return text[0].upper() + text[1:].lower()
-        
-        # Validar campos requeridos y actualizar solo los campos enviados
+
         if 'name' in data:
-            product.name = capitalize_text(data['name'])  # Capitalizar nombre
+            product.name = capitalize_text(data['name'])
         if 'description' in data:
-            product.description = capitalize_text(data['description'])  # Capitalizar descripción
+            product.description = capitalize_text(data['description'])
         if 'price' in data:
             product.price = data['price']
         if 'image_url' in data:
             product.image_url = data['image_url'] if data['image_url'] else None
-        # Mantiene la categoría si no se envía
-        product.category = data.get('category', product.category)
-        #if 'category' in data:
-            #product.category = data['category']
-        
-        # Guardar los cambios en la base de datos
+
+        if 'categories' in data:
+            product.categories.clear()
+            seen = set()
+            for cat_name in data['categories']:
+                normalized_cat = normalize_name(cat_name)
+                if not normalized_cat or normalized_cat in seen:
+                    continue
+                seen.add(normalized_cat)
+                category = Category.query.filter_by(name=normalized_cat).first()
+                if not category:
+                    category = Category(name=normalized_cat)
+                    db.session.add(category)
+                    db.session.flush()
+                product.categories.append(category)
+
+        if 'events' in data:
+            product.events.clear()
+            seen = set()
+            for event_name in data['events']:
+                normalized_event = normalize_name(event_name)
+                if not normalized_event or normalized_event in seen:
+                    continue
+                seen.add(normalized_event)
+                event = Event.query.filter_by(name=normalized_event).first()
+                if not event:
+                    event = Event(name=normalized_event)
+                    db.session.add(event)
+                    db.session.flush()
+                product.events.append(event)
+
         db.session.commit()
         return jsonify({"message": "Product updated successfully!"}), 200
-    
+
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Failed to update product", "details": str(e)}), 500
@@ -457,17 +527,17 @@ def edit_admin_product(current_user, product_id):
 @main.route('/admin/products/delete/<int:product_id>', methods=['DELETE'])
 @token_required
 def delete_admin_product(current_user, product_id):
-    try:
-        # Verificar si el usuario actual es un administrador
-        if not current_user.is_admin:
-            return jsonify({"error": "Unauthorized access, admin only"}), 403
+    # Solo admin puede borrar productos
+    if not current_user.is_admin:
+        return jsonify({"error": "Unauthorized access, admin only"}), 403
 
-        # Buscar el producto en la base de datos
+    try:
+        # Buscar producto
         product = Product.query.get(product_id)
         if not product:
             return jsonify({"error": "Product not found"}), 404
         
-        # Eliminar el producto de la base de datos
+        # Eliminar producto
         db.session.delete(product)
         db.session.commit()
 
@@ -476,6 +546,7 @@ def delete_admin_product(current_user, product_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Failed to delete product", "details": str(e)}), 500
+
 
 # Ruta protegida para obtener todas las reservas (solo para admin)
 @main.route('/admin/reservations', methods=['GET'])
@@ -513,6 +584,7 @@ def get_admin_reservations(current_user):
     except Exception as e:
         return jsonify({"error": "Failed to fetch reservations", "details": str(e)}), 500
     
+# Ruta protegida para obtener Eliminar reservas (solo para admin)    
 @main.route('/admin/reservations/<int:reservation_id>', methods=['DELETE'])
 @token_required
 def delete_reservation(current_user, reservation_id):
@@ -525,3 +597,97 @@ def delete_reservation(current_user, reservation_id):
     db.session.commit()
 
     return jsonify({"message": "Reserva eliminada exitosamente"}), 200
+
+#--------------------------------------------CATEGORIAS----------------------------------------------------------------
+# # Ruta para obtener todas las categorias
+@main.route('/categories', methods=['GET'])
+def get_categories():
+    categories = Category.query.order_by(Category.name).all()
+    result = [{"id": cat.id, "name": cat.name} for cat in categories]
+    return jsonify(result), 200
+
+
+#--------------------------------------------EVENTOS----------------------------------------------------------------
+
+# # Ruta para obtener todas los eventos
+@main.route('/events', methods=['GET'])
+def get_events():
+    events = Event.query.all()
+    events_list = [{"id": e.id, "title": e.title, "date": e.date.isoformat()} for e in events]
+    return jsonify(events_list), 200
+
+
+
+
+
+
+
+#--------------------------------------------RUTAS VIEJAS DE CATEGORY-----------------------------------------------
+# @main.route('/categories', methods=['GET'])
+# def get_categories():
+#     categories = db.session.query(Product.category).distinct().all()
+#     # Aplicar normalización a las categorías existentes
+#     category_list = []
+#     for cat in categories:
+#         if cat[0]:
+#             normalized = cat[0].strip().lower()
+#             # Normalización más robusta
+#             if normalized.endswith('ies') and len(normalized) > 4:
+#                 normalized = normalized[:-3] + 'y'  # "categories" -> "category"
+#             elif normalized.endswith('s') and len(normalized) > 3:
+#                 normalized = normalized[:-1]
+#             category_list.append(normalized)
+#     return jsonify(sorted(list(set(category_list)))), 200  # Elimina duplicados y ordena la lista
+
+
+
+# @main.route('/products', methods=['GET'])
+# def get_products():
+#     category = request.args.get('category')
+    
+#     if category:
+#         # Decodificar y normalizar igual que al guardar
+#         decoded_category = unquote(category).strip().lower()
+#         if decoded_category.endswith('s') and len(decoded_category) > 3:
+#             search_term = decoded_category[:-1]
+#         else:
+#             search_term = decoded_category
+        
+#         # Búsqueda flexible (incluye plural y singular)
+#         products = Product.query.filter(
+#             (Product.category.ilike(f"%{search_term}%")) |
+#             (Product.category.ilike(f"%{search_term}s%"))
+#         ).all()
+#     else:
+#         products = Product.query.all()
+    
+#     products_list = [
+#         {
+#             "id": product.id,
+#             "name": product.name,
+#             "description": product.description,
+#             "price": product.price,
+#             "image_url": product.image_url,
+#             "category": product.category
+#         }
+#         for product in products
+#     ]
+    
+#     # Devuelve lista vacía si no hay productos, en lugar de 404
+#     return jsonify(products_list), 200
+
+
+
+# @main.route('/add_product', methods=['POST'])
+# def add_product():
+#     data = request.get_json()
+#     new_product = Product(
+#         name=data['name'],
+#         description=data['description'],
+#         price=data['price'],
+#         image_url=data.get('image_url', None),
+#         category=data.get('category', None)
+#     )
+#     db.session.add(new_product)
+#     db.session.commit()
+#     return jsonify({"message": "Product added successfully!"}), 201
