@@ -29,6 +29,7 @@ backend/
  │ └── # Archivos de rutas Flask para API y vistas
  
 ├── instance
+│ └── site.db #Aquí se guarda la base de datos (sqlite)
 ├── venv
 ├── run.py
 │
