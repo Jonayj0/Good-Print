@@ -11,7 +11,7 @@ function AddProduct() {
     const [price, setPrice] = useState('');
     const [imageUrl, setImageUrl] = useState(''); // URL directa de imagen
     const [imageFile, setImageFile] = useState(null); // Archivo desde equipo
-    const [category, setCategory] = useState('');
+    const [categories, setCategories] = useState('');
     const navigate = useNavigate();
 
     // Manejador de archivo de imagen
@@ -41,7 +41,7 @@ function AddProduct() {
             description,
             price,
             image_url: imageUrl, // URL directa, si se ha proporcionado
-            category
+            categories: categories.split(',').map(cat => cat.trim()) // Convierte la cadena de categorías en un array
         };
 
         try {
@@ -87,8 +87,8 @@ function AddProduct() {
                         type="text" 
                         className="form-control mb-3" 
                         placeholder="Categoria" 
-                        value={category} 
-                        onChange={(e) => setCategory(e.target.value)} 
+                        value={categories} 
+                        onChange={(e) => setCategories(e.target.value)} 
                         required 
                     />
                     <input 
