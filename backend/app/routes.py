@@ -446,44 +446,71 @@ def add_admin_product(current_user):
 @main.route('/admin/products/edit/<int:product_id>', methods=['PUT'])
 @token_required
 def edit_admin_product(current_user, product_id):
-    
-    # Verificar si el usuario es administrador
     if not current_user.is_admin:
         return jsonify({"error": "Unauthorized"}), 403
-    
-    # Obtener los datos enviados por el cliente
+
     data = request.get_json()
-    
+
+    def capitalize_text(text):
+        if not text or len(text) == 0:
+            return text
+        return text[0].upper() + text[1:].lower()
+
+    def normalize_name(name):
+        name = name.strip().lower()
+        if not name:
+            return None
+        if name.endswith('s') and len(name) > 3:
+            name = name[:-1]
+        return name.capitalize()
+
     try:
-        # Buscar el producto en la base de datos
         product = Product.query.get(product_id)
         if not product:
             return jsonify({"error": "Product not found"}), 404
-        
-        # Función para capitalizar (primera letra mayúscula, resto minúsculas)
-        def capitalize_text(text):
-            if not text or len(text) == 0:
-                return text
-            return text[0].upper() + text[1:].lower()
-        
-        # Validar campos requeridos y actualizar solo los campos enviados
+
         if 'name' in data:
-            product.name = capitalize_text(data['name'])  # Capitalizar nombre
+            product.name = capitalize_text(data['name'])
         if 'description' in data:
-            product.description = capitalize_text(data['description'])  # Capitalizar descripción
+            product.description = capitalize_text(data['description'])
         if 'price' in data:
             product.price = data['price']
         if 'image_url' in data:
             product.image_url = data['image_url'] if data['image_url'] else None
-        # Mantiene la categoría si no se envía
-        product.category = data.get('category', product.category)
-        #if 'category' in data:
-            #product.category = data['category']
-        
-        # Guardar los cambios en la base de datos
+
+        if 'categories' in data:
+            product.categories.clear()
+            seen = set()
+            for cat_name in data['categories']:
+                normalized_cat = normalize_name(cat_name)
+                if not normalized_cat or normalized_cat in seen:
+                    continue
+                seen.add(normalized_cat)
+                category = Category.query.filter_by(name=normalized_cat).first()
+                if not category:
+                    category = Category(name=normalized_cat)
+                    db.session.add(category)
+                    db.session.flush()
+                product.categories.append(category)
+
+        if 'events' in data:
+            product.events.clear()
+            seen = set()
+            for event_name in data['events']:
+                normalized_event = normalize_name(event_name)
+                if not normalized_event or normalized_event in seen:
+                    continue
+                seen.add(normalized_event)
+                event = Event.query.filter_by(name=normalized_event).first()
+                if not event:
+                    event = Event(name=normalized_event)
+                    db.session.add(event)
+                    db.session.flush()
+                product.events.append(event)
+
         db.session.commit()
         return jsonify({"message": "Product updated successfully!"}), 200
-    
+
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Failed to update product", "details": str(e)}), 500
@@ -493,17 +520,17 @@ def edit_admin_product(current_user, product_id):
 @main.route('/admin/products/delete/<int:product_id>', methods=['DELETE'])
 @token_required
 def delete_admin_product(current_user, product_id):
-    try:
-        # Verificar si el usuario actual es un administrador
-        if not current_user.is_admin:
-            return jsonify({"error": "Unauthorized access, admin only"}), 403
+    # Solo admin puede borrar productos
+    if not current_user.is_admin:
+        return jsonify({"error": "Unauthorized access, admin only"}), 403
 
-        # Buscar el producto en la base de datos
+    try:
+        # Buscar producto
         product = Product.query.get(product_id)
         if not product:
             return jsonify({"error": "Product not found"}), 404
         
-        # Eliminar el producto de la base de datos
+        # Eliminar producto
         db.session.delete(product)
         db.session.commit()
 
@@ -512,6 +539,7 @@ def delete_admin_product(current_user, product_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Failed to delete product", "details": str(e)}), 500
+
 
 # Ruta protegida para obtener todas las reservas (solo para admin)
 @main.route('/admin/reservations', methods=['GET'])
