@@ -603,8 +603,16 @@ def delete_reservation(current_user, reservation_id):
 @main.route('/categories', methods=['GET'])
 def get_categories():
     categories = Category.query.order_by(Category.name).all()
-    result = [{"id": cat.id, "name": cat.name} for cat in categories]
+    
+    def normalize_name(name):
+        name = name.strip().lower()
+        if name.endswith('s'):
+            name = name[:-1]
+        return name
+
+    result = [{"id": cat.id, "name": normalize_name(cat.name)} for cat in categories]
     return jsonify(result), 200
+
 
 
 #--------------------------------------------EVENTOS----------------------------------------------------------------

@@ -334,18 +334,17 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const resp = await fetch(`${import.meta.env.VITE_API_BASE_URL}/categories`);
                     if (!resp.ok) throw new Error("Error al obtener categorías");
-                    let data = await resp.json();
-            
-                    // Normalizar: minúsculas y singular (básico)
-                    const categoriasNormalizadas = [...new Set(data.map(cat =>
-                        cat.trim().toLowerCase().replace(/s$/, "") // elimina plural simple
-                    ))];
-            
-                    setStore({ categories: categoriasNormalizadas });
+                    const data = await resp.json(); // [{id, name}, ...]
+
+                    // Extraer solo nombres únicos (ya normalizados desde backend)
+                    const categoriasUnicas = [...new Set(data.map(cat => cat.name))];
+
+                    setStore({ categories: categoriasUnicas });
                 } catch (error) {
                     console.error("Error al traer categorías", error);
                 }
-            }
+            },  
+
             
             // Aquí puedes añadir más acciones según sea necesario            
             // getProductsByCategory: async (category) => {
