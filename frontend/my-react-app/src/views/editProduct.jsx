@@ -6,48 +6,58 @@ import "../style/editProduct.css";
 
 function EditProduct() {
     const { actions, store } = useContext(Context);
-    const { id } = useParams(); // Obtener el ID del producto desde la URL
+    const { id } = useParams();
     const navigate = useNavigate();
 
-    // Estado para los datos del producto
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
-    const [imageUrl, setImageUrl] = useState(""); // URL directa de imagen
-    const [imageFile, setImageFile] = useState(null); // Archivo desde equipo
-    const [category, setCategory] = useState("");
+    const [imageUrl, setImageUrl] = useState("");
+    const [imageFile, setImageFile] = useState(null);
+    const [categories, setCategories] = useState([]);
+    const [events, setEvents] = useState([]);
 
-    // Cargar los datos del producto al montar el componente
+    // Normalización para cuando se envía el formulario
+    const normalizeArray = (arr) => {
+        const cleaned = arr
+            .map(str => str.trim())
+            .filter(str => str.length > 0)
+            .map(str => {
+                let norm = str.toLowerCase();
+                if (norm.endsWith('s') && norm.length > 3) norm = norm.slice(0, -1);
+                return norm;
+            });
+        return Array.from(new Set(cleaned))
+            .map(str => str.charAt(0).toUpperCase() + str.slice(1));
+    };
+
     useEffect(() => {
         const loadProduct = async () => {
-            const product = store.products.find((product) => product.id === parseInt(id)); // Buscar en el store
+            const product = store.products.find(p => p.id === parseInt(id));
             if (product) {
                 setName(product.name);
                 setDescription(product.description);
                 setPrice(product.price);
                 setImageUrl(product.image_url);
-                setCategory(product.category || "Añadir categoria");
+                setCategories(product.categories || []);
+                setEvents(product.events || []);
             } else {
-                // Si no está en el store, llama a la API para obtenerlo
-                await actions.getProducts(true); // Refresca productos si es necesario
+                await actions.getProducts(true);
             }
         };
-
         loadProduct();
     }, [id, store.products, actions]);
 
-    // Manejador de archivo de imagen
     const handleImageFileChange = (e) => {
         setImageFile(e.target.files[0]);
-        setImageUrl(""); // Limpia el campo de URL si se selecciona un archivo
+        setImageUrl("");
     };
 
     const resetImageFile = () => {
-        setImageFile(null); // Limpia el archivo seleccionado
-        setImageUrl(""); // Limpia la URL para asegurarse de que no se envíe nada
-        document.getElementById("imageFileInput").value = ""; // Limpia el input de archivo
+        setImageFile(null);
+        setImageUrl("");
+        document.getElementById("imageFileInput").value = "";
     };
-    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -56,40 +66,40 @@ function EditProduct() {
             name,
             description,
             price,
-            category,
-            image_url: imageUrl || "", // Si imageUrl es vacía o null, se envía como cadena vacía
+            categories: normalizeArray(categories),
+            events: normalizeArray(events),
+            image_url: imageUrl || "",
         };
-        // Si se seleccionó un archivo, subimos la imagen y obtenemos la URL
-    if (imageFile) {
-        const formData = new FormData();
-        formData.append("file", imageFile);
-        formData.append("upload_preset", "preset_good_print");
 
-        try {
-            const response = await fetch("https://api.cloudinary.com/v1_1/dtxkcfugs/image/upload", {
-                method: "POST",
-                body: formData,
-            });
+        if (imageFile) {
+            const formData = new FormData();
+            formData.append("file", imageFile);
+            formData.append("upload_preset", "preset_good_print");
 
-            if (response.ok) {
-                const data = await response.json();
-                productData.image_url = data.secure_url; // Asigna la URL de Cloudinary
-            } else {
-                throw new Error("Error al subir la imagen.");
+            try {
+                const response = await fetch("https://api.cloudinary.com/v1_1/dtxkcfugs/image/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    productData.image_url = data.secure_url;
+                } else {
+                    throw new Error("Error al subir la imagen.");
+                }
+            } catch (error) {
+                console.error("Error al subir la imagen:", error);
             }
-        } catch (error) {
-            console.error("Error al subir la imagen:", error);
         }
-    }
 
         try {
-            await actions.updateProduct(id, productData, imageFile); // Usa la acción de editar
+            await actions.updateProduct(id, productData, imageFile);
             Swal.fire({
                 icon: "success",
                 title: "Producto actualizado",
                 text: "El producto se ha actualizado correctamente.",
             });
-            navigate("/admin/products"); // Redirige a la lista de productos
+            navigate("/admin/products");
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -119,13 +129,32 @@ function EditProduct() {
                         onChange={(e) => setDescription(e.target.value)}
                         required
                     />
-                    <textarea 
-                        type="text" 
-                        className="form-control mb-3" 
-                        placeholder="Categoria" 
-                        value={category} 
-                        onChange={(e) => setCategory(e.target.value)} 
-                        required 
+                    <input
+                        type="text"
+                        className="form-control mb-3"
+                        placeholder="Categorías (separadas por coma)"
+                        value={categories.join(", ")}
+                        onChange={(e) => {
+                            const cats = e.target.value
+                                .split(",")
+                                .map(c => c.trim())
+                                .filter(c => c.length > 0);
+                            setCategories(cats);
+                        }}
+                        required
+                    />
+                    <input
+                        type="text"
+                        className="form-control mb-3"
+                        placeholder="Eventos (separados por coma)"
+                        value={events.join(", ")}
+                        onChange={(e) => {
+                            const evs = e.target.value
+                                .split(",")
+                                .map(ev => ev.trim())
+                                .filter(ev => ev.length > 0);
+                            setEvents(evs);
+                        }}
                     />
                     <input
                         type="number"
@@ -165,3 +194,5 @@ function EditProduct() {
 }
 
 export default EditProduct;
+
+
