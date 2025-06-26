@@ -9,6 +9,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             user: null,
             reservations: [],
             categories: [],
+            selectedCategory: "Todas", // Para filtrar productos por categoría
             // Añade otros estados iniciales aquí
         },
         actions: {
@@ -344,6 +345,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error al traer categorías", error);
                 }
             },  
+            resetCategory: () => {
+                setStore({ selectedCategory: "Todas" });
+            },
+
+            setSelectedCategory: (categoryName) => {
+                setStore({ selectedCategory: categoryName });
+            },
 
             
             // Aquí puedes añadir más acciones según sea necesario            

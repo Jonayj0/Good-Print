@@ -7,29 +7,33 @@ import homeImagen from "../assets/HomeImagen.jpeg";
 
 function Home() {
   const { store, actions } = useContext(Context);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const selectedCategory = store.selectedCategory;
 
-  // useEffect(() => {
-  //   if (!store.products.length) {
-  //     actions.getProducts().catch((error) => {
-  //       console.error("Error fetching products:", error);
-  //     });
-  //   }
-  // }, [store.products.length, actions]);
-
-  // Llamar a getProducts con la categoría seleccionada
+  // Carga productos por defecto si aún no hay
   useEffect(() => {
-    actions.getProducts(false, selectedCategory).catch(error => {
-        console.error("Error fetching products:", error);
-    });
-  }, [selectedCategory]); // Se ejecuta cada vez que cambia la categoría
+    if (!store.products.length && selectedCategory === "") {
+      actions.getProducts(false, "").catch((error) => {
+        console.error("Error fetching default products:", error);
+      });
+    }
+  }, [store.products.length, actions, selectedCategory]);
 
+  // Cargar productos al cambiar categoría
+  useEffect(() => {
+    if (selectedCategory === "Todas") {
+      actions.getProducts(false, "");
+    } else {
+      actions.getProducts(false, selectedCategory);
+    }
+  }, [selectedCategory]);
+
+  // Cargar categorías una sola vez
   useEffect(() => {
     actions.getCategories();
   }, []);
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid home-wrapper">
       <div className="home container text-center">
         <h1 className="titulo-home">
           <div>
@@ -39,34 +43,34 @@ function Home() {
             <SplitText text="Good Print" delay={60} />
           </div>
         </h1>
-        <img
-          className="foto-home mb-5 mt-3"
-          src={homeImagen}
-          alt="imagen-gp"
-        />
-        {/* 🔽 Dropdown para seleccionar la categoría 🔽 */}
-          <div className="filter-container mb-4">
-                <label htmlFor="category-select">Busca por categoría:</label>
-                <select
-                    id="category-select"
-                    className="form-select"
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                    <option value="">Todas</option>
-                    {store.categories.map((cat, idx) => (
-                        <option key={idx} value={cat}>
-                            {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                        </option>
-                    ))}
-                </select>
-          </div>
+
+        <img className="foto-home mb-4 mt-3" src={homeImagen} alt="imagen-gp" />
+
+        <div className="filter-container mb-4">
+          <label htmlFor="category-select">Busca por categoría:</label>
+          <select
+            id="category-select"
+            className="form-select"
+            value={selectedCategory}
+            onChange={(e) => actions.setSelectedCategory(e.target.value)}
+          >
+            <option value="Todas">Todas</option>
+            {store.categories.map((cat, idx) => (
+              <option key={idx} value={cat}>
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-      {/* 🔼 Fin del Dropdown 🔼 */}
-      <section className="row tarjetas-container">
+
+      <section className="row tarjetas-container justify-content-center">
         {Array.isArray(store.products) && store.products.length > 0 ? (
           store.products.map((product) => (
-            <div key={product.id} className="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-3 mb-4 d-flex justify-content-center">
+            <div
+              key={product.id}
+              className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
+            >
               <CardProductos
                 id={product.id}
                 name={product.name || "Unknown Name"}
@@ -77,9 +81,12 @@ function Home() {
             </div>
           ))
         ) : (
-          <p>No products available</p>
+          <p>No hay productos disponibles.</p>
         )}
       </section>
+
+      {/* Espaciado visual si hay solo 1 producto */}
+      {store.products.length === 1 && <div style={{ height: "30vh" }}></div>}
     </div>
   );
 }

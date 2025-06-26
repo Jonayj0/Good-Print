@@ -71,4 +71,16 @@
   }
 }
 
-  
+.home-wrapper {
+  min-height: 100vh;
+  padding-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.tarjetas-container {
+  margin-top: 2rem;
+  padding: 0 1rem;
+  min-height: 50vh;
+}
