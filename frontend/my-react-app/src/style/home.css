@@ -12,6 +12,8 @@
   display: block;
   object-fit: cover; /* Ajusta cómo se redimensiona la imagen */
   object-position: center; /* Centra la imagen si es recortada */
+  margin-top: -10px; /* sube la imagen un poco */
+  padding-top: 20px;  /* evita que se corte contenido */
 }
 
 .titulo-home {
@@ -19,7 +21,7 @@
   font-weight: bold;
   text-shadow: 3px 3px 1px rgba(0, 0, 0, 0.7); /* Para mejorar la legibilidad del texto */
   position: absolute;
-  top: 50%;
+  top: 65%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: rgb(64, 248, 245);
@@ -29,7 +31,7 @@
 }
 
 .titulo-home-2{
-  margin-bottom: 8rem; /* Añade un margen inferior para evitar que el texto se superponga con otros elementos */
+  margin-bottom: 10rem; /* Añade un margen inferior para evitar que el texto se superponga con otros elementos */
   z-index: 1; /* Asegura que el texto esté por encima de la imagen */
   white-space: nowrap; /* Evita que el texto se divida en varias líneas */
   overflow: hidden; /* Oculta el texto que se desborda */
@@ -73,14 +75,23 @@
 
 .home-wrapper {
   min-height: 100vh;
+  /* padding-top: 120px; ✅ Compensa la altura del navbar (aprox. 20px de padding + elementos internos) */
   padding-bottom: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 }
 
+
 .tarjetas-container {
-  margin-top: 2rem;
+  margin-top: 0rem;
   padding: 0 1rem;
   min-height: 50vh;
+}
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+  margin-top: 10px;
 }

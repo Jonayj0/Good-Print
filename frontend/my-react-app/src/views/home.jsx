@@ -44,9 +44,9 @@ function Home() {
           </div>
         </h1>
 
-        <img className="foto-home mb-4 mt-3" src={homeImagen} alt="imagen-gp" />
+        <img className="foto-home" src={homeImagen} alt="imagen-gp" />
 
-        <div className="filter-container mb-4">
+        <div className="filter-container">
           <label htmlFor="category-select">Busca por categoría:</label>
           <select
             id="category-select"
