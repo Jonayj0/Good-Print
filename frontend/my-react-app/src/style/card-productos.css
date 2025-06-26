@@ -1,16 +1,13 @@
-/* src/style/card-productos.css */
-
 /* Contenedor para las tarjetas */
 .tarjetas-container {
   display: flex;
-  /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); Caja adaptable */
-  gap: 16px; /* Espaciado entre tarjetas */
-  padding: 16px;
   flex-wrap: wrap;
   justify-content: center;
+  gap: 16px;
+  padding: 16px;
 }
 
-/* Estilo de las tarjetas */
+/* Estilo de la tarjeta individual */
 .tarjeta-productos {
   display: flex;
   flex-direction: column;
@@ -20,12 +17,15 @@
   overflow: hidden;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
-  width: 100%; /* Adaptable al contenedor */
+  width: 100%;
   max-width: 300px;
+  min-height: 460px; /* Asegura altura consistente */
+  background-color: white;
+  margin: 0 auto; /* Centrado extra por seguridad */
 }
 
 .tarjeta-productos:hover {
-  transform: scale(1.03); /* Efecto hover */
+  transform: scale(1.03);
 }
 
 .card-img-top {
@@ -57,7 +57,7 @@
 }
 
 .card-text:not(.expanded) {
-  max-height: 3rem; /* Limita a aproximadamente dos líneas de texto */
+  max-height: 3rem;
 }
 
 .card-buttons {
@@ -67,9 +67,7 @@
   margin-top: auto;
 }
 
-.detalles-btn {
-  width: 48%;
-}
+.detalles-btn,
 .reservar-btn {
   width: 48%;
 }
@@ -82,7 +80,6 @@
   margin-left: 5px;
 }
 
-/* Vista móvil */
 @media screen and (max-width: 768px) {
   .card-title {
     font-size: 1rem;
@@ -95,4 +92,9 @@
   .btn {
     font-size: 0.9rem;
   }
+
+  .tarjeta-productos {
+    min-height: 420px; /* Reducido en móvil */
+  }
 }
+
