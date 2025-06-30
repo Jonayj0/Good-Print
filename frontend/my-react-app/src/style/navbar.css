@@ -17,9 +17,14 @@
   display: flex;
   align-items: center;
     font-family: 'MiFuente', sans-serif;
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: #003fec;
     text-decoration: none;
     text-shadow: #ffffff 2px 2px 2px;
     margin-right: 20px;
+}
+@media screen and (max-width: 768px) {
+button.navbar-brand.btn.btn-link {
+        font-size: 2rem;
+}
 }
