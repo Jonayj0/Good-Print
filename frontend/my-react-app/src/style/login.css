@@ -1,83 +1,203 @@
-/* login.css */
-.login-container {
-    display: flex;
-    flex-direction: column; /* Alinea los elementos verticalmente */
-    justify-content: center; /* Centra verticalmente */
-    align-items: center; /* Centra horizontalmente */
-    background-color: #abeefb; /* Fondo suave */
-    border-radius: 8px; /* Bordes redondeados */
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    padding: 40px 20px; /* Espaciado interno */
-    width: 90%; /* Ancho del contenedor */
-    max-width: 400px; /* Ancho máximo */
-    margin: auto; /* Centra el contenedor en la página */
-    transition: transform 0.3s; /* Transición suave al hover */
-    margin-bottom: 10rem;
+/* === Base General === */
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.login-container:hover {
-    transform: scale(1.02); /* Efecto de escala al pasar el ratón */
+/* === Página Login === */
+.login-page {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.login-title {
-    text-align: center; /* Centramos el texto */
-    color: #333; /* Color del texto */
-    margin-bottom: 30px; /* Espacio debajo del título */
-    font-size: 26px; /* Tamaño de fuente */
+.login-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.5);
+  z-index: -1;
 }
 
-.login-input {
-    width: 100%; /* Ancho completo */
-    padding: 15px; /* Espaciado interno */
-    margin: 10px 0; /* Espaciado superior e inferior */
-    border: 1px solid #ccc; /* Borde gris */
-    border-radius: 5px; /* Bordes redondeados */
-    font-size: 16px; /* Tamaño de fuente */
-    transition: border-color 0.3s; /* Transición suave */
-    background-color: aliceblue;
-    color: #414144;
+.login-overlay {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  background-color: rgba(99, 255, 221, 0.25);
 }
 
-.login-input:focus {
-    border-color: #007bff; /* Color de borde al hacer foco */
-    outline: none; /* Eliminar el borde de enfoque predeterminado */
+.login-header {
+  font-size: clamp(2.2rem, 7vw, 4rem);
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-family: 'mifuente', sans-serif;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.9);
 }
 
-.login-button {
-    width: 100%; /* Ancho completo */
-    padding: 15px; /* Espaciado interno */
-    background-color: #007bff; /* Color de fondo del botón */
-    color: white; /* Color del texto */
-    border: none; /* Sin borde */
-    border-radius: 5px; /* Bordes redondeados */
-    font-size: 16px; /* Tamaño de fuente */
-    cursor: pointer; /* Cambia el cursor al pasar el ratón */
-    transition: background-color 0.3s; /* Transición suave */
+.login-box {
+  background: rgba(3, 250, 213, 0.7);
+  padding: 2rem;
+  border-radius: 18px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+  width: 90%;
+  max-width: 400px;
+  backdrop-filter: blur(12px);
+  animation: fadeIn 0.8s ease-out;
 }
 
-.login-button:hover {
-    background-color: #0056b3; /* Color más oscuro al pasar el ratón */
+/* === Formulario Login Aislado === */
+.gpl-login-container {
+  width: 100%;
 }
 
-.error-message {
-    color: red; /* Color del texto de error */
-    margin-top: 10px; /* Espacio encima del mensaje de error */
+.gpl-login-title {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #000;
 }
 
-@media (max-width: 600px) {
-    .login-container {
-        padding: 20px; /* Ajustar el espaciado en pantallas pequeñas */
-    }
+body.dark-mode .gpl-login-title {
+  color: #fff;
+}
 
-    .login-title {
-        font-size: 22px; /* Ajustar el tamaño del título en pantallas pequeñas */
-    }
+.gpl-login-input {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #222;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
 
-    .login-input {
-        font-size: 14px; /* Ajustar el tamaño de la fuente en pantallas pequeñas */
-    }
+.gpl-login-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #00a09d;
+}
 
-    .login-button {
-        font-size: 14px; /* Ajustar el tamaño de la fuente en el botón en pantallas pequeñas */
-    }
+.gpl-login-button {
+  width: 100%;
+  padding: 14px;
+  background-color: #03c016;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s;
+}
+
+.gpl-login-button:hover {
+  background-color: #00a09d;
+  transform: scale(1.02);
+}
+
+.gpl-error-message {
+  color: #ff4d4d;
+  margin-top: 10px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.gpl-password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.gpl-toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #444;
+}
+
+body.dark-mode .gpl-toggle-password {
+  color: #e0e0e0;
+}
+
+/* === Modo Oscuro === */
+body.dark-mode {
+  background-color: #0e0e11;
+  color: #eaeaea;
+}
+
+body.dark-mode .login-bg {
+  filter: brightness(0.3) contrast(1.2);
+}
+
+body.dark-mode .login-overlay {
+  background-color: rgba(10, 10, 10, 0.5);
+}
+
+body.dark-mode .login-header {
+  color: #00e1ff;
+  text-shadow: 2px 2px 6px rgba(12, 12, 12, 0.9);
+}
+
+body.dark-mode .login-box {
+  background: rgba(20, 20, 40, 0.75);
+  color: #e0e0e0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+body.dark-mode .gpl-login-input {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .gpl-login-button {
+  background-color: #0060d6;
+}
+
+body.dark-mode .gpl-login-button:hover {
+  background-color: #004aa6;
+}
+
+/* === Botón Toggle Tema === */
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;
+  color: #ffffff;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.3s ease;
+}
+
+/* === Animación === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
