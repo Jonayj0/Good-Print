@@ -1,16 +1,15 @@
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { useContext } from "react";
-import { Context } from "../store/AppContext"; // Importa el contexto donde tienes el flujo
-import Swal from "sweetalert2"; // Importa SweetAlert2
+import { useContext, useState } from "react";
+import { Context } from "../store/AppContext";
+import Swal from "sweetalert2";
 import "../style/card-products-admin.css";
 
 function CardProductsAdmin({ id, name, description, price, image_url }) {
-    const { actions } = useContext(Context); // Accede a las acciones del flujo
+    const { actions } = useContext(Context);
+    const [showFullDescription, setShowFullDescription] = useState(false);
 
-    // Función para manejar la eliminación con confirmación
     const handleDelete = async (productId) => {
-        // Mostrar alerta de confirmación con SweetAlert2
         const result = await Swal.fire({
             title: "¿Estás seguro?",
             text: "No podrás deshacer esta acción",
@@ -22,7 +21,6 @@ function CardProductsAdmin({ id, name, description, price, image_url }) {
         });
 
         if (result.isConfirmed) {
-            // Si el usuario confirma la eliminación, llamar a la acción deleteProduct
             const deleteResult = await actions.deleteProduct(productId);
             if (deleteResult.success) {
                 Swal.fire("Eliminado!", deleteResult.message, "success");
@@ -32,32 +30,43 @@ function CardProductsAdmin({ id, name, description, price, image_url }) {
         }
     };
 
+    const toggleDescription = () => {
+        setShowFullDescription(prev => !prev);
+    };
+
     return (
-        <div className="tarjeta-productos-admin" style={{ width: "18rem" }}>
-            <Link to={`/admin/products/edit/${id}`} className="admin-edit btn btn-success">
-                <i className="fa-regular fa-pen-to-square"></i>
-            </Link>
-            <button
-                className="admin-delete btn btn-danger ms-1"
-                onClick={() => handleDelete(id)} // Llama a handleDelete con el id del producto
-            >
-                <i className="fa-solid fa-trash" />
-            </button>
-            <img src={image_url} className="card-img-top mt-2" alt={name} />
-            <div className="card-body">
-                <h5 className="card-title">{name}</h5>
-                <p className="card-text">{description}</p>
-                <p className="card-text">
-                    <strong>Precio: </strong>
-                    {price}
-                    <strong>€</strong>
+        <div className="admin-card">
+            <div className="admin-card-actions">
+                <Link to={`/admin/products/edit/${id}`} className="admin-btn edit">
+                    <i className="fa-regular fa-pen-to-square"></i>
+                </Link>
+                <button className="admin-btn delete" onClick={() => handleDelete(id)}>
+                    <i className="fa-solid fa-trash" />
+                </button>
+            </div>
+
+            <img src={image_url} className="admin-card-img" alt={name} />
+
+            <div className="admin-card-body">
+                <h5 className="admin-card-title">{name}</h5>
+
+                <p className={`admin-card-description ${showFullDescription ? 'expanded' : ''}`}>
+                    {showFullDescription ? description : `${description.slice(0, 80)}...`}
+                    {description.length > 80 && (
+                        <button className="admin-see-more" onClick={toggleDescription}>
+                            {showFullDescription ? "Ver menos" : "Ver más"}
+                        </button>
+                    )}
                 </p>
-                <Link to={`/product-details/${id}`} className="btn btn-primary mb-1 detalles-btn">
-                    Ver Detalles
-                </Link>
-                <Link to={`/reservar/${id}/${encodeURIComponent(name)}`} className="btn btn-success reservar-btn">
-                    Reservar
-                </Link>
+
+                <p className="admin-card-price">
+                    <strong>Precio:</strong> {price}€
+                </p>
+
+                <div className="admin-card-buttons">
+                    <Link to={`/product-details/${id}`} className="admin-btn details">Ver Detalles</Link>
+                    <Link to={`/reservar/${id}/${encodeURIComponent(name)}`} className="admin-btn reserve">Reservar</Link>
+                </div>
             </div>
         </div>
     );
@@ -72,3 +81,4 @@ CardProductsAdmin.propTypes = {
 };
 
 export default CardProductsAdmin;
+

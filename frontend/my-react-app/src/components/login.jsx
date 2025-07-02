@@ -26,7 +26,7 @@ const Login = () => {
 
   return (
     <div className="gpl-login-container">
-  <h1 className="gpl-login-title">Iniciar Sesión</h1>
+  <h1 className="gpl-login-title">Administrador</h1>
   <form onSubmit={handleLogin}>
     <input
       type="text"

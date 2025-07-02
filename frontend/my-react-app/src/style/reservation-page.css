@@ -131,3 +131,11 @@
   align-items: center;
   margin-top: 20px;
 }
+.titulo-admin-reservas {
+  font-size: 3rem;
+  color: #333;
+  margin-bottom: 20px;
+  margin-top: 10px;
+  text-align: center;
+  font-weight: bold;
+}

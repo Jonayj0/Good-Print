@@ -13,22 +13,23 @@ function CardProductos({ id, name, description, price, image_url }) {
   return (
     <div className="tarjeta-productos">
       <Link to={`/product-details/${id}`} className="img">
-      <img src={image_url} className="card-img-top" alt={name} />
-          </Link>
+        <img src={image_url} className="card-img-top" alt={name} />
+      </Link>
       <div className="card-body">
         <h5 className="card-title">{name}</h5>
         <p className={`card-text ${isExpanded ? "expanded" : ""}`}>
-          {isExpanded ? description : truncatedDescription}
-        </p>
-        {description.length > 100 && (
-          <span className="leer-mas" onClick={toggleExpand}>
-            {isExpanded ? " Ver menos" : " Leer más"}
-          </span>
-        )}
-        <p className="card-text">
-          <strong>Precio: </strong>
-          {price} <strong>€</strong>
-        </p>
+  {isExpanded ? description : truncatedDescription}
+</p>
+{description.length > 100 && (
+  <span className="leer-mas" onClick={toggleExpand}>
+    {isExpanded ? "Ver menos" : "Leer más"}
+  </span>
+)}
+
+        <p className="card-price">
+  <strong>Desde: </strong>
+  <span className="price-number">{price}</span> <strong>€</strong>
+</p>
         <div className="card-buttons">
           <Link to={`/product-details/${id}`} className="btn btn-primary detalles-btn">
             Detalles

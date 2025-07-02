@@ -1,16 +1,131 @@
-.tarjeta-productos-admin{
-    margin: 1em auto; /* Centrar la tarjeta horizontalmente */
-    margin-left: 10px;
-    padding: 10px;
+.admin-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 300px;
+    height: 100%;
+    min-height: 500px;
     background-color: #fff;
-    border-radius: 10px; /* Bordes redondeados más pronunciados */
-    box-shadow: 0 20px 20px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    box-sizing: content-box;
+    border-radius: 10px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    margin: 1rem auto;
+    padding: 1rem;
+    transition: transform 0.3s ease;
 }
-.detalles-btn {
-    width: 48%;
+
+.admin-card:hover {
+    transform: translateY(-5px);
 }
-.reservar-btn {
-    width: 48%;
+
+.admin-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
 }
+
+.admin-btn {
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: #fff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-btn.edit { background-color: #28a745; }
+.admin-btn.delete { background-color: #dc3545; }
+
+.admin-card-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+}
+
+.admin-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    flex-grow: 1;
+    padding-top: 1rem;
+}
+
+.admin-card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.admin-card-description {
+    font-size: 1.05rem;
+    color: #555;
+    overflow: hidden;
+    line-height: 1.4;
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.admin-card-description.expanded {
+    overflow: visible;
+}
+
+.admin-see-more {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-left: 6px;
+    padding: 0%;
+    font-weight: bold;
+}
+
+.admin-card-price {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #333;
+    margin-top: auto;
+}
+
+.admin-card-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.admin-btn.details {
+    background-color: #007bff;
+    flex: 1 1 48%;
+}
+
+.admin-btn.reserve {
+    background-color: #06a94c;
+    flex: 1 1 48%;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .admin-card {
+        min-height: auto;
+    }
+
+    .admin-card-buttons {
+        flex-direction: column;
+    }
+
+    .admin-btn.details,
+    .admin-btn.reserve {
+        width: 100%;
+    }
+}
+
