@@ -111,6 +111,7 @@ const ReservationPage = () => {
   };
 
   return (
+    <div className="reservation-wrapper">
     <div className="reservation-page__container container">
       <h1 className="reservation-page__header text-center">Reservar: {name}</h1>
       <form className="reservation-page__form" onSubmit={handleSubmit}>
@@ -191,12 +192,13 @@ const ReservationPage = () => {
           </div>
         ) : (
           <div className="text-center">
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary reservation-page__button">
               Reservar
             </button>
           </div>
         )}
       </form>
+    </div>
     </div>
   );
 };
