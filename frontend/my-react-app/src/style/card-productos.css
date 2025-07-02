@@ -1,4 +1,3 @@
-/* Contenedor para las tarjetas */
 .tarjetas-container {
   display: flex;
   flex-wrap: wrap;
@@ -7,7 +6,6 @@
   padding: 16px;
 }
 
-/* Estilo de la tarjeta individual */
 .tarjeta-productos {
   display: flex;
   flex-direction: column;
@@ -15,13 +13,13 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s ease-in-out;
   width: 100%;
   max-width: 300px;
-  min-height: 460px; /* Asegura altura consistente */
+  min-height: 460px;
   background-color: white;
-  margin: 0 auto; /* Centrado extra por seguridad */
+  margin: 0 auto;
 }
 
 .tarjeta-productos:hover {
@@ -46,39 +44,67 @@
   margin-bottom: 8px;
   color: #333;
   text-align: center;
+  font-weight: bold;
 }
 
 .card-text {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #555;
   overflow: hidden;
   text-overflow: ellipsis;
   transition: max-height 0.3s ease;
+  line-height: 1.5;
 }
 
 .card-text:not(.expanded) {
-  max-height: 3rem;
+  max-height: 3.5rem;
 }
+
+.leer-mas {
+  color: #007bff;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-top: auto;
+  display: inline-block;
+}
+
+
+.card-price {
+  font-size: 1.1rem;
+  color: #000000;
+  margin-top: auto;
+  margin-bottom: 8px;
+}
+.price-number {
+  font-family: 'Playfair Display', serif; /* o cualquier fuente elegante */
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #060606;
+}
+
 
 .card-buttons {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  margin-top: auto;
+  margin-top: 1rem;
 }
 
 .detalles-btn,
 .reservar-btn {
   width: 48%;
+  box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  border-radius: 6px;
 }
 
-.leer-mas {
-  display: inline-block;
-  color: #007bff;
-  cursor: pointer;
-  font-weight: bold;
-  margin-left: 5px;
+.detalles-btn:hover,
+.reservar-btn:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
 }
+
 
 @media screen and (max-width: 768px) {
   .card-title {
@@ -86,7 +112,7 @@
   }
 
   .card-text {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
   }
 
   .btn {
@@ -94,7 +120,15 @@
   }
 
   .tarjeta-productos {
-    min-height: 420px; /* Reducido en móvil */
+    min-height: 420px;
+  }
+
+  .card-buttons {
+    flex-direction: column;
+  }
+
+  .detalles-btn,
+  .reservar-btn {
+    width: 100%;
   }
 }
-
